@@ -1,0 +1,27 @@
+{
+  "name": "quizlogy-services",
+  "version": "1.0.0",
+  "description": "Backend",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Quizlogi/QuizlogyServices.git"
+  },
+  "author": "Quizlogi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Quizlogi/QuizlogyServices/issues"
+  },
+  "homepage": "https://github.com/Quizlogi/QuizlogyServices#readme",
+  "dependencies": {
+    "@hapi/hapi": "^21.3.9",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0",
+    "prisma": "^5.13.0"
+  }
+}
