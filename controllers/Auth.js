@@ -42,7 +42,9 @@ const Login = async (request, h) => {
     
         return h.response({
             message: 'Login success',
-            token
+            data: {
+                token
+            }
         }).code(200);
     } catch (err) {
         console.error(err);
@@ -54,19 +56,21 @@ const Register = async (request, h) => {
         const User = new UserModel();
     
         const payload = request.payload || {};
-        if (!payload.email || !payload.password || !payload.username) return h.response({
-            message: 'Email, password, and username is required'
+        if (!payload.name || !payload.email || !payload.password || !payload.username) return h.response({
+            message: 'Email, Name, password, and username is required'
         }).code(400);
     
-        const user = await User.db.findUnique({
+        const user = await User.db.findFirst({
             where: {
-                email: payload.email,
-                username: payload.username
-            }
+                OR: [
+                    { email: payload.email },
+                    { username: payload.username }
+                ]
+            },
         });
     
         if (user) return h.response({
-            message: 'Email already registered'
+            message: 'Email or username already exists'
         }).code(400);
     
         const hashedPassword = await bcrypt.hash(payload.password, 10);
@@ -74,7 +78,8 @@ const Register = async (request, h) => {
             data: {
                 email: payload.email,
                 password: hashedPassword,
-                username: payload.username
+                username: payload.username,
+                role_id: 1
             }
         });
     
