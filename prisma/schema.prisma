@@ -8,6 +8,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
@@ -15,30 +19,85 @@ datasource db {
 
 model User {
   id        String   @id @default(cuid()) @map("_id")
-  email     String   @unique
   name      String?
+  username  String   @unique
+  email     String   @unique
   password  String
-  role      Role     @relation(fields: [roleId], references: [id])
   roleId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Posts     Posts[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  role      Role     @relation(fields: [roleId], references: [id])
+  UserQuiz  UserQuiz[]
 }
-
-model Posts {
-  id        String   @id @default(cuid()) @map("_id")
-  title     String
-  content   String
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Role {
   id        String   @id @default(cuid()) @map("_id")
   name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
   User      User[]
+}
+
+
+model Quiz {
+  id        String   @id @default(cuid()) @map("_id")
+  title     String
+  description String
+  category_id String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  category Category @relation(fields: [category_id], references: [id])
+  questions Question[]
+  UserQuiz  UserQuiz[]
+}
+
+model Category {
+  id        String   @id @default(cuid()) @map("_id")
+  name      String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  quiz      Quiz[]
+}
+
+model Question {
+  id        String   @id @default(cuid()) @map("_id")
+  question  String
+  quiz_id   String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  options   Option[]
+  quiz      Quiz     @relation(fields: [quiz_id], references: [id])
+  UserAnswer UserAnswer[]
+}
+
+model Option {
+  id        String   @id @default(cuid()) @map("_id")
+  option    String
+  is_correct Boolean
+  question_id String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  question  Question @relation(fields: [question_id], references: [id])
+}
+
+model  UserQuiz {
+  id        String   @id @default(cuid()) @map("_id")
+  user_id   String
+  quiz_id   String
+  score     Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user      User     @relation(fields: [user_id], references: [id])
+  quiz      Quiz     @relation(fields: [quiz_id], references: [id])
+  UserAnswer UserAnswer[]
+}
+
+model  UserAnswer {
+  id        String   @id @default(cuid()) @map("_id")
+  user_quiz_id String
+  question_id  String
+  option_id    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user_quiz    UserQuiz @relation(fields: [user_quiz_id], references: [id])
+  question     Question @relation(fields: [question_id], references: [id])
 }

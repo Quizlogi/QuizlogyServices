@@ -1,0 +1,104 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id String [pk]
+  name String
+  username String [unique, not null]
+  email String [unique, not null]
+  password String [not null]
+  roleId String [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  role Role [not null]
+  UserQuiz UserQuiz [not null]
+}
+
+Table Role {
+  id String [pk]
+  name String [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  User User [not null]
+}
+
+Table Quiz {
+  id String [pk]
+  title String [not null]
+  description String [not null]
+  category_id String [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  category Category [not null]
+  questions Question [not null]
+  UserQuiz UserQuiz [not null]
+}
+
+Table Category {
+  id String [pk]
+  name String [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  quiz Quiz [not null]
+}
+
+Table Question {
+  id String [pk]
+  question String [not null]
+  quiz_id String [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  options Option [not null]
+  quiz Quiz [not null]
+  UserAnswer UserAnswer [not null]
+}
+
+Table Option {
+  id String [pk]
+  option String [not null]
+  is_correct Boolean [not null]
+  question_id String [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  question Question [not null]
+}
+
+Table UserQuiz {
+  id String [pk]
+  user_id String [not null]
+  quiz_id String [not null]
+  score Int [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  user User [not null]
+  quiz Quiz [not null]
+  UserAnswer UserAnswer [not null]
+}
+
+Table UserAnswer {
+  id String [pk]
+  user_quiz_id String [not null]
+  question_id String [not null]
+  option_id String [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  user_quiz UserQuiz [not null]
+  question Question [not null]
+}
+
+Ref: User.roleId > Role.id
+
+Ref: Quiz.category_id > Category.id
+
+Ref: Question.quiz_id > Quiz.id
+
+Ref: Option.question_id > Question.id
+
+Ref: UserQuiz.user_id > User.id
+
+Ref: UserQuiz.quiz_id > Quiz.id
+
+Ref: UserAnswer.user_quiz_id > UserQuiz.id
+
+Ref: UserAnswer.question_id > Question.id
