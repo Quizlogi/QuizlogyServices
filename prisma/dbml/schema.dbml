@@ -8,7 +8,7 @@ Table User {
   username String [unique, not null]
   email String [unique, not null]
   password String [not null]
-  roleId String [not null]
+  role_id String [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
   role Role [not null]
@@ -87,7 +87,7 @@ Table UserAnswer {
   question Question [not null]
 }
 
-Ref: User.roleId > Role.id
+Ref: User.role_id > Role.id
 
 Ref: Quiz.category_id > Category.id
 

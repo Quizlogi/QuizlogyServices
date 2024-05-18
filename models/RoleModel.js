@@ -1,12 +1,8 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-class UserModel {
+class RoleModel {
     constructor() {
-        this.db = prisma.user;
+        this.db = prisma.role;
     }
-
-    // atur sesuai kebutuhan
 }
-
-module.exports = UserModel;
