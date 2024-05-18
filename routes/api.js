@@ -1,2 +1,13 @@
+const { ServerRoute, Refs } = require('@hapi/hapi');
+const { Login } = require('../controllers/Auth');
 
-module.exports = [];
+/**
+ * @type {ServerRoute<Refs>[]}
+ */
+module.exports = [
+    {
+        method: 'GET',
+        path: '/',
+        handler: Login
+    }
+];
