@@ -1,13 +1,18 @@
 const { ServerRoute, Refs } = require('@hapi/hapi');
-const { Login } = require('../controllers/Auth');
+const { Login, Register } = require('../controllers/Auth');
 
 /**
  * @type {ServerRoute<Refs>[]}
  */
 module.exports = [
     {
-        method: 'GET',
-        path: '/',
+        method: 'POST',
+        path: '/api/login',
         handler: Login
+    },
+    {
+        method: 'POST',
+        path: '/api/register',
+        handler: Register
     }
 ];

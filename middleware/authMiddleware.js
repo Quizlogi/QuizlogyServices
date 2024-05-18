@@ -10,7 +10,9 @@ const authMiddleware = {
     register: async function (server, options) {
         server.ext('onPreResponse', (request, h) => {
             const requestPath = request.route.path;
-            if (requestPath.startsWith('/api')) {
+            // Exclude paths
+            const excludePaths = ['/api/login', '/api/register'];
+            if (requestPath.startsWith('/api') && !excludePaths.includes(requestPath)) {
                 const token = request.headers.authorization;
                 if (!token) {
                     return h.response({ message: 'Token not found' }).code(401);

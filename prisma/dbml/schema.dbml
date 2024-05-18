@@ -3,12 +3,12 @@
 //// ------------------------------------------------------
 
 Table User {
-  id String [pk]
+  id Int [pk, increment]
   name String
   username String [unique, not null]
   email String [unique, not null]
   password String [not null]
-  role_id String [not null]
+  role_id Int [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
   role Role [not null]
@@ -16,7 +16,7 @@ Table User {
 }
 
 Table Role {
-  id String [pk]
+  id Int [pk, increment]
   name String [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
@@ -24,10 +24,10 @@ Table Role {
 }
 
 Table Quiz {
-  id String [pk]
+  id Int [pk, increment]
   title String [not null]
   description String [not null]
-  category_id String [not null]
+  category_id Int [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
   category Category [not null]
@@ -36,7 +36,7 @@ Table Quiz {
 }
 
 Table Category {
-  id String [pk]
+  id Int [pk, increment]
   name String [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
@@ -44,9 +44,9 @@ Table Category {
 }
 
 Table Question {
-  id String [pk]
+  id Int [pk, increment]
   question String [not null]
-  quiz_id String [not null]
+  quiz_id Int [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
   options Option [not null]
@@ -55,19 +55,19 @@ Table Question {
 }
 
 Table Option {
-  id String [pk]
+  id Int [pk, increment]
   option String [not null]
   is_correct Boolean [not null]
-  question_id String [not null]
+  question_id Int [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
   question Question [not null]
 }
 
 Table UserQuiz {
-  id String [pk]
-  user_id String [not null]
-  quiz_id String [not null]
+  id Int [pk, increment]
+  user_id Int [not null]
+  quiz_id Int [not null]
   score Int [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
@@ -77,10 +77,10 @@ Table UserQuiz {
 }
 
 Table UserAnswer {
-  id String [pk]
-  user_quiz_id String [not null]
-  question_id String [not null]
-  option_id String [not null]
+  id Int [pk, increment]
+  user_quiz_id Int [not null]
+  question_id Int [not null]
+  option_id Int [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
   user_quiz UserQuiz [not null]

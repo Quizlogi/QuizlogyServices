@@ -17,7 +17,8 @@ const init = async () => {
 
     await server.register(AuthMiddleware);
 
-    server.route(MainRoutes, APIRoutes);
+    server.route(MainRoutes);
+    server.route(APIRoutes);
 
     await server.start();
 

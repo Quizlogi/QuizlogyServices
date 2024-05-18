@@ -13,24 +13,24 @@ generator dbml {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String   @id @default(cuid()) @map("_id")
+  id        Int      @id @default(autoincrement())
   name      String?
   username  String   @unique
   email     String   @unique
   password  String
-  role_id    String
+  role_id   Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   role      Role     @relation(fields: [role_id], references: [id])
   UserQuiz  UserQuiz[]
 }
 model Role {
-  id        String   @id @default(cuid()) @map("_id")
+  id        Int      @id @default(autoincrement())
   name      String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -39,10 +39,10 @@ model Role {
 
 
 model Quiz {
-  id        String   @id @default(cuid()) @map("_id")
+  id        Int      @id @default(autoincrement())
   title     String
   description String
-  category_id String
+  category_id Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   category Category @relation(fields: [category_id], references: [id])
@@ -51,7 +51,7 @@ model Quiz {
 }
 
 model Category {
-  id        String   @id @default(cuid()) @map("_id")
+  id        Int      @id @default(autoincrement())
   name      String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -59,9 +59,9 @@ model Category {
 }
 
 model Question {
-  id        String   @id @default(cuid()) @map("_id")
+  id        Int      @id @default(autoincrement())
   question  String
-  quiz_id   String
+  quiz_id   Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   options   Option[]
@@ -70,19 +70,19 @@ model Question {
 }
 
 model Option {
-  id        String   @id @default(cuid()) @map("_id")
+  id        Int      @id @default(autoincrement())
   option    String
   is_correct Boolean
-  question_id String
+  question_id Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   question  Question @relation(fields: [question_id], references: [id])
 }
 
 model  UserQuiz {
-  id        String   @id @default(cuid()) @map("_id")
-  user_id   String
-  quiz_id   String
+  id        Int      @id @default(autoincrement())
+  user_id   Int
+  quiz_id   Int
   score     Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -92,10 +92,10 @@ model  UserQuiz {
 }
 
 model  UserAnswer {
-  id        String   @id @default(cuid()) @map("_id")
-  user_quiz_id String
-  question_id  String
-  option_id    String
+  id        Int      @id @default(autoincrement())
+  user_quiz_id Int
+  question_id  Int
+  option_id    Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   user_quiz    UserQuiz @relation(fields: [user_quiz_id], references: [id])
