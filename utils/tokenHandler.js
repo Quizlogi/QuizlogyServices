@@ -9,7 +9,12 @@ const verifyToken = (token) => {
     return JWT.verify(token, secret);
 }
 
+const decodeToken = (token) => {
+    return JWT.decode(token);
+}
+
 module.exports = {
     createToken,
-    verifyToken
+    verifyToken,
+    decodeToken
 };
