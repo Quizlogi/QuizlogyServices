@@ -18,10 +18,12 @@
   },
   "homepage": "https://github.com/Quizlogi/QuizlogyServices#readme",
   "dependencies": {
+    "@discordjs/collection": "^2.1.0",
     "@hapi/hapi": "^21.3.9",
     "@prisma/client": "^5.13.0",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
+    "hapi-auth-jwt2": "^10.5.1",
     "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
