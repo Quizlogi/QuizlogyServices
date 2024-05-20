@@ -1,10 +1,13 @@
 const { PrismaClient } = require('@prisma/client');
+
 const prisma = new PrismaClient();
 
-class RoleModel {
+class QuizModel {
     constructor() {
-        this.db = prisma.role;
+        this.db = prisma.quiz;
     }
+
+    // async getDiscovery
 }
 
-module.exports = RoleModel;
+module.exports = QuizModel;

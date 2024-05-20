@@ -15,6 +15,7 @@ class UserModel {
                 username: true,
                 role: {
                     select: {
+                        id: true,
                         name: true
                     }
                 }
@@ -29,6 +30,18 @@ class UserModel {
 
     async getUserById(userId) {
         return await this.db.findUnique({
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                username: true,
+                role: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                }
+            },
             where: {
                 id: parseInt(userId)
             }

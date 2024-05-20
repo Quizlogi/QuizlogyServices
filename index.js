@@ -23,7 +23,8 @@ const init = async () => {
             aud: 'urn:audience',
             iss: 'urn:issuer',
             sub: false,
-            maxAgeSec: 14400
+            // time 24 hours
+            maxAgeSec: 86400
         },
         validate: (artifacts, request, h) => {
             return {

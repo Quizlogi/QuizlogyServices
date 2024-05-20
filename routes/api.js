@@ -1,6 +1,7 @@
 const { ServerRoute, Refs } = require('@hapi/hapi');
 const { Login, Register } = require('../controllers/Auth');
 const { getUser, getUserById } = require('../controllers/User');
+const { discovery, allQuiz } = require('../controllers/Quiz');
 
 /**
  * @type {ServerRoute<Refs>[]}
@@ -38,5 +39,21 @@ module.exports = [
             auth: 'jwt'
         },
         handler: getUserById
+    },
+    {
+        method: 'GET',
+        path: '/api/quiz',
+        config: {
+            auth: false
+        },
+        handler: allQuiz
+    },
+    {
+        method: 'GET',
+        path: '/api/quiz/discovery',
+        config: {
+            auth: false
+        },
+        handler: discovery
     }
 ];
