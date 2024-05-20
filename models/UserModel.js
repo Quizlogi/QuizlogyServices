@@ -6,6 +6,11 @@ class UserModel {
         this.db = prisma.user;
     }
 
+    /**
+     * 
+     * @param {Number[]} roleId 
+     * @returns 
+     */
     async getUserByRoleId(roleId = []) { 
         return await this.db.findMany({
             select: {
@@ -28,6 +33,11 @@ class UserModel {
         });
     }
 
+    /**
+     * 
+     * @param {number} userId 
+     * @returns 
+     */
     async getUserById(userId) {
         return await this.db.findUnique({
             select: {

@@ -49,10 +49,24 @@ const quizDetail = async (request, h) => {
         const { id } = request.params;
         if (typeof id != 'number') return h.response({ message: 'Bad Arguments' }).code(404);
 
-        const quiz = await Quiz.db.findOne({
+        const quiz = await Quiz.db.findFirst({
+            select: {
+                id: true,
+                title: true,
+                questions: {
+                    select: {
+                        question: true,
+                        options: {
+                            select: {
+                                option: true
+                            }
+                        }
+                    }
+                }
+            },
             where: {
                 id: request.params.id
-            }
+            },
         });
 
         if (!quiz) return h.response({
