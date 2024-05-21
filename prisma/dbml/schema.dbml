@@ -62,6 +62,7 @@ Table Option {
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
   question Question [not null]
+  UserAnswer UserAnswer [not null]
 }
 
 Table UserQuiz {
@@ -85,6 +86,7 @@ Table UserAnswer {
   updated_at DateTime [not null]
   user_quiz UserQuiz [not null]
   question Question [not null]
+  option Option [not null]
 }
 
 Ref: User.role_id > Role.id
@@ -102,3 +104,5 @@ Ref: UserQuiz.quiz_id > Quiz.id
 Ref: UserAnswer.user_quiz_id > UserQuiz.id
 
 Ref: UserAnswer.question_id > Question.id
+
+Ref: UserAnswer.option_id > Option.id
