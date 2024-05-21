@@ -28,6 +28,7 @@ model User {
   updated_at DateTime   @updatedAt
   role       Role       @relation(fields: [role_id], references: [id])
   UserQuiz   UserQuiz[]
+  Session    Session[]
 }
 
 model Role {
@@ -48,6 +49,7 @@ model Quiz {
   category    Category   @relation(fields: [category_id], references: [id])
   questions   Question[]
   UserQuiz    UserQuiz[]
+  Session     Session[]
 }
 
 model Category {
@@ -102,4 +104,15 @@ model UserAnswer {
   user_quiz    UserQuiz @relation(fields: [user_quiz_id], references: [id])
   question     Question @relation(fields: [question_id], references: [id])
   option       Option   @relation(fields: [option_id], references: [id])
+}
+
+// buatkan session saat user sedang melakukan quiz
+model Session {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  quiz_id    Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user       User     @relation(fields: [user_id], references: [id])
+  quiz       Quiz     @relation(fields: [quiz_id], references: [id])
 }
