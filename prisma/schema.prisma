@@ -18,86 +18,101 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String?
-  username  String   @unique
-  email     String   @unique
-  password  String
-  role_id   Int
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  role      Role     @relation(fields: [role_id], references: [id])
-  UserQuiz  UserQuiz[]
-}
-model Role {
-  id        Int      @id @default(autoincrement())
-  name      String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  User      User[]
+  id         Int        @id @default(autoincrement())
+  name       String?
+  username   String     @unique
+  email      String     @unique
+  password   String
+  role_id    Int
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  role       Role       @relation(fields: [role_id], references: [id])
+  UserQuiz   UserQuiz[]
+  Session    Session[]
 }
 
+model Role {
+  id         Int      @id @default(autoincrement())
+  name       String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  User       User[]
+}
 
 model Quiz {
-  id        Int      @id @default(autoincrement())
-  title     String
+  id          Int        @id @default(autoincrement())
+  title       String
   description String
   category_id Int
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  category Category @relation(fields: [category_id], references: [id])
-  questions Question[]
-  UserQuiz  UserQuiz[]
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  category    Category   @relation(fields: [category_id], references: [id])
+  questions   Question[]
+  UserQuiz    UserQuiz[]
+  Session     Session[]
 }
 
 model Category {
-  id        Int      @id @default(autoincrement())
-  name      String
+  id         Int      @id @default(autoincrement())
+  name       String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  quiz      Quiz[]
+  quiz       Quiz[]
 }
 
 model Question {
-  id        Int      @id @default(autoincrement())
-  question  String
-  quiz_id   Int
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  options   Option[]
-  quiz      Quiz     @relation(fields: [quiz_id], references: [id])
+  id         Int          @id @default(autoincrement())
+  question   String
+  quiz_id    Int
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+  options    Option[]
+  quiz       Quiz         @relation(fields: [quiz_id], references: [id])
   UserAnswer UserAnswer[]
 }
 
 model Option {
-  id        Int      @id @default(autoincrement())
-  option    String
-  is_correct Boolean
+  id          Int          @id @default(autoincrement())
+  option      String
+  is_correct  Boolean
   question_id Int
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  question  Question @relation(fields: [question_id], references: [id])
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+  question    Question     @relation(fields: [question_id], references: [id])
+  UserAnswer  UserAnswer[]
 }
 
-model  UserQuiz {
-  id        Int      @id @default(autoincrement())
-  user_id   Int
-  quiz_id   Int
-  score     Int
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  user      User     @relation(fields: [user_id], references: [id])
-  quiz      Quiz     @relation(fields: [quiz_id], references: [id])
+model UserQuiz {
+  id         Int          @id @default(autoincrement())
+  user_id    Int
+  quiz_id    Int
+  score      Int
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+  user       User         @relation(fields: [user_id], references: [id])
+  quiz       Quiz         @relation(fields: [quiz_id], references: [id])
   UserAnswer UserAnswer[]
 }
 
-model  UserAnswer {
-  id        Int      @id @default(autoincrement())
+model UserAnswer {
+  id           Int      @id @default(autoincrement())
   user_quiz_id Int
   question_id  Int
   option_id    Int
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
   user_quiz    UserQuiz @relation(fields: [user_quiz_id], references: [id])
   question     Question @relation(fields: [question_id], references: [id])
+  option       Option   @relation(fields: [option_id], references: [id])
+}
+
+// buatkan session saat user sedang melakukan quiz
+model Session {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  quiz_id    Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user       User     @relation(fields: [user_id], references: [id])
+  quiz       Quiz     @relation(fields: [quiz_id], references: [id])
 }
