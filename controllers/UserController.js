@@ -6,14 +6,32 @@ const QuizModel = require('../models/QuizModel');
  * 
  * @param {Request} request 
  * @param {ResponseToolkit} h 
+ * @returns 
  */
-const discovery = async (request, h) => {
-    const Quiz = new QuizModel();
-
+const me = async (request, h) => {
     return h.response({
         message: 'Success',
-        data: []
+        data: request.auth.credentials
     });
+}
+
+/**
+ * 
+ * @param {Request} request 
+ * @param {ResponseToolkit} h 
+ */
+const discovery = async (request, h) => {
+    try {
+        const Quiz = new QuizModel();
+        const mostAnswered = await Quiz.getDiscovery();
+    
+        return h.response({
+            message: 'Success',
+            data: mostAnswered
+        });
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 /**
@@ -83,6 +101,7 @@ const quizDetail = async (request, h) => {
 }
 
 module.exports = {
+    me,
     discovery,
     allQuiz,
     quizDetail

@@ -6,11 +6,16 @@ const UserModel = require('../models/UserModel');
 module.exports = [
     {
         method: 'GET',
+        config: {
+            auth: false
+        },
         path: '/',
         handler: (request, h) => {
-            const User = new UserModel();
-
-            return 'Hello, world!';
+            return h.response({
+                status: 'success',
+                message: 'Welcome to Quizlogy API',
+                documentation: 'https://quiz-dev.mengkodingkan.com',
+            });
         }
     }
 ];
