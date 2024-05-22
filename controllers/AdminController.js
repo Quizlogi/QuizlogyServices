@@ -1,12 +1,17 @@
 const { Request, ResponseToolkit } = require('@hapi/hapi');
 const UserModel = require('../models/UserModel');
+
 /**
  * 
  * @param {Request} request 
  * @param {ResponseToolkit} h 
  * @returns 
  */
-const getUser = async (request, h) => { 
+const getUser = async (request, h) => {
+    if (request.auth.credentials.role != 3) return h.response({
+        message: 'Forbidden'
+    }).code(403);
+
     try {
         const auth = request.auth.credentials;
 
@@ -35,7 +40,45 @@ const getUser = async (request, h) => {
  * @param {ResponseToolkit} h 
  * @returns 
  */
+const insertUser = async (request, h) => { 
+    if (request.auth.credentials.role != 3) return h.response({
+        message: 'Forbidden'
+    }).code(403);
+
+    try {
+        const User = new UserModel();
+
+        const payload = request.payload || {};
+
+        const user = await User.db.create({
+            data: {
+                username: payload.username,
+                email: payload.email,
+                password: payload.password,
+                role_id: payload.role_id
+            }
+        });
+
+        return h.response({
+            message: 'Success',
+            data: user
+        }).code(201);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+/**
+ * 
+ * @param {Request} request 
+ * @param {ResponseToolkit} h 
+ * @returns 
+ */
 const getUserById = async (request, h) => {
+    if (request.auth.credentials.role != 3) return h.response({
+        message: 'Forbidden'
+    }).code(403);
+    
     try {
         const User = new UserModel();
 
@@ -63,6 +106,7 @@ const getUserById = async (request, h) => {
 }
 
 module.exports = {
+    insertUser,
     getUser,
     getUserById,
 }
