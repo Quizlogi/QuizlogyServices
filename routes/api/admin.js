@@ -1,5 +1,5 @@
 const { ServerRoute, Refs } = require('@hapi/hapi');
-const { getUser, getUserById } = require('../../controllers/AdminController');
+const { getUser, getUserById, insertUser } = require('../../controllers/AdminController');
 
 /**
  * @type {ServerRoute<Refs>[]}
@@ -15,10 +15,20 @@ module.exports = [
         handler: getUser
     },
     {
+        method: 'POST',
+        path: '/api/admin/users',
+        config: {
+            auth: 'jwt',
+            tags: ['main']
+        },
+        handler: insertUser
+    },
+    {
         method: 'GET',
         path: '/api/admin/users/{id}',
         config: {
-            auth: 'jwt'
+            auth: 'jwt',
+            tags: ['main']
         },
         handler: getUserById
     }

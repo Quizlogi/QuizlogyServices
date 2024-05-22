@@ -76,6 +76,7 @@ const Register = async (request, h) => {
         const hashedPassword = await bcrypt.hash(payload.password, 10);
         const newUser = await User.db.create({
             data: {
+                name: payload.name,
                 email: payload.email,
                 password: hashedPassword,
                 username: payload.username,
