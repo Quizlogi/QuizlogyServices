@@ -106,9 +106,9 @@ model UserAnswer {
   option       Option   @relation(fields: [option_id], references: [id])
 }
 
-// buatkan session saat user sedang melakukan quiz
 model Session {
   id         Int      @id @default(autoincrement())
+  session_id String   @unique @default(uuid())
   user_id    Int
   quiz_id    Int
   created_at DateTime @default(now())

@@ -13,6 +13,7 @@ Table User {
   updated_at DateTime [not null]
   role Role [not null]
   UserQuiz UserQuiz [not null]
+  Session Session [not null]
 }
 
 Table Role {
@@ -33,6 +34,7 @@ Table Quiz {
   category Category [not null]
   questions Question [not null]
   UserQuiz UserQuiz [not null]
+  Session Session [not null]
 }
 
 Table Category {
@@ -89,6 +91,17 @@ Table UserAnswer {
   option Option [not null]
 }
 
+Table Session {
+  id Int [pk, increment]
+  session_id String [unique, not null]
+  user_id Int [not null]
+  quiz_id Int [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  user User [not null]
+  quiz Quiz [not null]
+}
+
 Ref: User.role_id > Role.id
 
 Ref: Quiz.category_id > Category.id
@@ -106,3 +119,7 @@ Ref: UserAnswer.user_quiz_id > UserQuiz.id
 Ref: UserAnswer.question_id > Question.id
 
 Ref: UserAnswer.option_id > Option.id
+
+Ref: Session.user_id > User.id
+
+Ref: Session.quiz_id > Quiz.id
