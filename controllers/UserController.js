@@ -43,7 +43,11 @@ const allQuiz = async (request, h) => {
     try {
         const Quiz = new QuizModel();
 
-        const quiz = await Quiz.db.findMany();
+        const quiz = await Quiz.db.findMany({
+            include: {
+                category: true
+            }
+        });
 
         return h.response({
             message: 'Success',
@@ -65,25 +69,15 @@ const quizDetail = async (request, h) => {
         const Quiz = new QuizModel();
         
         const { id } = request.params;
-        if (typeof id != 'number') return h.response({ message: 'Bad Arguments' }).code(404);
 
         const quiz = await Quiz.db.findFirst({
             select: {
                 id: true,
                 title: true,
-                questions: {
-                    select: {
-                        question: true,
-                        options: {
-                            select: {
-                                option: true
-                            }
-                        }
-                    }
-                }
+                description: true
             },
             where: {
-                id: request.params.id
+                id
             },
         });
 

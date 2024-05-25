@@ -29,6 +29,7 @@ model User {
   role       Role       @relation(fields: [role_id], references: [id])
   UserQuiz   UserQuiz[]
   Session    Session[]
+  Quiz       Quiz[]
 }
 
 model Role {
@@ -43,10 +44,13 @@ model Quiz {
   id          String     @id @default(uuid())
   title       String
   description String
+  image       String
   category_id String
+  user_id     String
   created_at  DateTime   @default(now())
   updated_at  DateTime   @updatedAt
   category    Category   @relation(fields: [category_id], references: [id])
+  user        User       @relation(fields: [user_id], references: [id])
   questions   Question[]
   UserQuiz    UserQuiz[]
   Session     Session[]

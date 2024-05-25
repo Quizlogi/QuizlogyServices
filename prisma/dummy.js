@@ -1,5 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcrypt');
 const { faker } = require('@faker-js/faker');
+
 const prisma = new PrismaClient();
 
 const asy = async () => {
@@ -9,7 +11,10 @@ const asy = async () => {
     const numberOfOptionsPerQuestion = 4;
     const numberOfUsers = 10;
 
+    const instructures = await prisma.user.findMany({ where: { role_id: 2 } });
     for (let i = 0; i < numberOfCategories; i++) {
+        const instructure = instructures[Math.floor(Math.random() * instructures.length)];
+
         const category = await prisma.category.create({
             data: {
                 name: faker.lorem.words(2) // Generate a random category name
@@ -21,6 +26,8 @@ const asy = async () => {
                 data: {
                     title: faker.lorem.words(5), // Generate a random quiz title
                     description: faker.lorem.sentence(), // Generate a random quiz description
+                    image: faker.image.imageUrl(), // Generate a random image URL
+                    user_id: instructure.id,
                     category_id: category.id
                 }
             });

@@ -1,7 +1,22 @@
 const { PrismaClient } = require('@prisma/client');
 const { faker } = require('@faker-js/faker');
+const bcrypt = require('bcrypt');
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient().$extends({
+    // auto encrypt password
+    query: {
+        user: {
+            $allOperations({ operation, args, query }) {
+                if (['create', 'update'].includes(operation) && args.data['password']) {
+                    args.data['password'] = bcrypt.hashSync(args.data['password'], 10);
+                }
+
+                return query(args);
+            }
+        }
+    }
+});
+
 
 const seed = async () => {
     console.log('Seeding database...');

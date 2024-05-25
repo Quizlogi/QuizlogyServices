@@ -14,6 +14,7 @@ Table User {
   role Role [not null]
   UserQuiz UserQuiz [not null]
   Session Session [not null]
+  Quiz Quiz [not null]
 }
 
 Table Role {
@@ -28,10 +29,13 @@ Table Quiz {
   id String [pk]
   title String [not null]
   description String [not null]
+  image String [not null]
   category_id String [not null]
+  user_id String [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
   category Category [not null]
+  user User [not null]
   questions Question [not null]
   UserQuiz UserQuiz [not null]
   Session Session [not null]
@@ -106,20 +110,22 @@ Ref: User.role_id > Role.id
 
 Ref: Quiz.category_id > Category.id
 
-Ref: Question.quiz_id > Quiz.id
+Ref: Quiz.user_id > User.id
 
-Ref: Option.question_id > Question.id
+Ref: Question.quiz_id > Quiz.id [delete: Cascade]
 
-Ref: UserQuiz.user_id > User.id
+Ref: Option.question_id > Question.id [delete: Cascade]
 
-Ref: UserQuiz.quiz_id > Quiz.id
+Ref: UserQuiz.user_id > User.id [delete: Cascade]
 
-Ref: UserAnswer.user_quiz_id > UserQuiz.id
+Ref: UserQuiz.quiz_id > Quiz.id [delete: Cascade]
 
-Ref: UserAnswer.question_id > Question.id
+Ref: UserAnswer.user_quiz_id > UserQuiz.id [delete: Cascade]
 
-Ref: UserAnswer.option_id > Option.id
+Ref: UserAnswer.question_id > Question.id [delete: Cascade]
 
-Ref: Session.user_id > User.id
+Ref: UserAnswer.option_id > Option.id [delete: Cascade]
 
-Ref: Session.quiz_id > Quiz.id
+Ref: Session.user_id > User.id [delete: Cascade]
+
+Ref: Session.quiz_id > Quiz.id [delete: Cascade]
