@@ -4,7 +4,7 @@
   "description": "Backend",
   "main": "index.js",
   "scripts": {
-    "setup": "prisma db push && node ./prisma/seed.js",
+    "setup": "prisma db push && node ./prisma/seed.js && node ./prisma/dummy.js",
     "dev": "nodemon index.js"
   },
   "repository": {

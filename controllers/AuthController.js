@@ -43,7 +43,11 @@ const Login = async (request, h) => {
         return h.response({
             message: 'Login success',
             data: {
-                token
+                token,
+                name: user.name,
+                username: user.username,
+                email: user.email,
+                role: user.role_id
             }
         }).code(200);
     } catch (err) {
@@ -73,12 +77,11 @@ const Register = async (request, h) => {
             message: 'Email or username already exists'
         }).code(400);
     
-        const hashedPassword = await bcrypt.hash(payload.password, 10);
         const newUser = await User.db.create({
             data: {
                 name: payload.name,
                 email: payload.email,
-                password: hashedPassword,
+                password: payload.password,
                 username: payload.username,
                 role_id: 1
             }

@@ -1,10 +1,11 @@
 const { PrismaClient } = require('@prisma/client');
-const bcrypt = require('bcrypt');
 const { faker } = require('@faker-js/faker');
 
 const prisma = new PrismaClient();
 
 const seed = async () => {
+    console.log('Seeding database...');
+
     // create role user, inspector, admin
     await prisma.role.createMany({
         data: [
@@ -14,7 +15,6 @@ const seed = async () => {
         ]
     });
 
-    // create user
     await prisma.user.create({
         data: {
             email: 'admin@mail.com',
@@ -24,12 +24,31 @@ const seed = async () => {
         }
     });
 
+    await prisma.user.create({
+        data: {
+            email: 'inst@mail.com',
+            password: 'inst',
+            username: 'inst',
+            role_id: 2
+        }
+    });
+
+    await prisma.user.create({
+        data: {
+            email: 'kato@mail.com',
+            password: 'kato',
+            username: 'kato',
+            name: 'Kato',
+            role_id: 1
+        }
+    });
+
     const fakerUser = () => {
         return {
             email: faker.internet.email(),
             name: faker.name.fullName(),
             username: faker.internet.userName(),
-            password: bcrypt.hashSync('password', 10),
+            password: 'password',
             role_id: 1
         }
     }

@@ -1,5 +1,5 @@
 const { ServerRoute, Refs } = require('@hapi/hapi');
-const { getUser, getUserById, insertUser, updateUser } = require('../../controllers/AdminController');
+const { getUser, getUserById, insertUser, updateUser, removeUser } = require('../../controllers/AdminController');
 
 /**
  * @type {ServerRoute<Refs>[]}
@@ -41,6 +41,13 @@ module.exports = [
         },
         handler: insertUser
     },
-    
+    {
+        method: 'DELETE',
+        path: '/api/admin/users/{id}',
+        config: {
+            auth: 'jwt',
+        },
+        handler: removeUser
+    }
     
 ];
