@@ -1,5 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcrypt');
 const { faker } = require('@faker-js/faker');
+
 const prisma = new PrismaClient();
 
 const asy = async () => {
@@ -9,7 +11,10 @@ const asy = async () => {
     const numberOfOptionsPerQuestion = 4;
     const numberOfUsers = 10;
 
+    const instructures = await prisma.user.findMany({ where: { role_id: 2 } });
     for (let i = 0; i < numberOfCategories; i++) {
+        const instructure = instructures[Math.floor(Math.random() * instructures.length)];
+
         const category = await prisma.category.create({
             data: {
                 name: faker.lorem.words(2) // Generate a random category name
@@ -21,6 +26,8 @@ const asy = async () => {
                 data: {
                     title: faker.lorem.words(5), // Generate a random quiz title
                     description: faker.lorem.sentence(), // Generate a random quiz description
+                    image: faker.image.imageUrl(), // Generate a random image URL
+                    user_id: instructure.id,
                     category_id: category.id
                 }
             });
@@ -49,48 +56,49 @@ const asy = async () => {
         }
     }
 
+    const users = await prisma.user.findMany({ where: { role_id: 3 } });
+    const quizzes = await prisma.quiz.findMany();
     for (let i = 0; i < numberOfUsers; i++) {
+        const quiz = quizzes[Math.floor(Math.random() * quizzes.length)];
+        const user_id = users[Math.floor(Math.random() * users.length)].id;
+
         const userQuiz = await prisma.userQuiz.create({
             data: {
-                user_id: i + 1, // Assign a user ID
-                quiz_id: Math.floor(Math.random() * numberOfCategories * numberOfQuizzesPerCategory) + 1, // Assign a random quiz ID
+                user_id: user_id,
+                quiz_id: quiz.id,
                 score: 0
             }
         });
 
-        const options = await prisma.option.findMany({
+        const questions = await prisma.question.findMany({
             where: {
-                question_id: Math.floor(Math.random() * numberOfCategories * numberOfQuizzesPerCategory * numberOfQuestionsPerQuiz) + 1 // Assign a random question ID
+                quiz_id: quiz.id
             }
         });
 
-        await prisma.userAnswer.create({
-            data: {
-                user_quiz_id: userQuiz.id,
-                question_id: Math.floor(Math.random() * numberOfCategories * numberOfQuizzesPerCategory * numberOfQuestionsPerQuiz) + 1, // Assign a random question ID
-                option_id: options[Math.floor(Math.random() * options.length)].id
-            }
-        });
-
-        // Update userQuiz score
-        const userAnswers = await prisma.userAnswer.findMany({
-            where: {
-                user_quiz_id: userQuiz.id
-            }
-        });
-
-        let score = 0;
-        for (const userAnswer of userAnswers) {
-            const option = await prisma.option.findUnique({
+        let correctAnswers = 0;
+        for (let j = 0; j < questions.length; j++) {
+            const options = await prisma.option.findMany({
                 where: {
-                    id: userAnswer.option_id
+                    question_id: questions[j].id
                 }
             });
 
-            if (option.is_correct) {
-                score += 1;
+            const userQuestion = await prisma.userAnswer.create({
+                data: {
+                    user_quiz_id: userQuiz.id,
+                    question_id: questions[j].id,
+                    option_id: options[Math.floor(Math.random() * options.length)].id
+                }
+            });
+
+            const selectedOption = options.find(option => option.id === userQuestion.option_id);
+            if (selectedOption.is_correct) {
+                correctAnswers++;
             }
         }
+
+        const score = (correctAnswers / questions.length) * 100;
 
         await prisma.userQuiz.update({
             where: {

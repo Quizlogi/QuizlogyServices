@@ -3,7 +3,7 @@
 //// ------------------------------------------------------
 
 Table User {
-  id Int [pk, increment]
+  id String [pk]
   name String
   username String [unique, not null]
   email String [unique, not null]
@@ -13,6 +13,8 @@ Table User {
   updated_at DateTime [not null]
   role Role [not null]
   UserQuiz UserQuiz [not null]
+  Session Session [not null]
+  Quiz Quiz [not null]
 }
 
 Table Role {
@@ -24,19 +26,23 @@ Table Role {
 }
 
 Table Quiz {
-  id Int [pk, increment]
+  id String [pk]
   title String [not null]
   description String [not null]
-  category_id Int [not null]
+  image String [not null]
+  category_id String [not null]
+  user_id String [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
   category Category [not null]
+  user User [not null]
   questions Question [not null]
   UserQuiz UserQuiz [not null]
+  Session Session [not null]
 }
 
 Table Category {
-  id Int [pk, increment]
+  id String [pk]
   name String [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
@@ -44,9 +50,9 @@ Table Category {
 }
 
 Table Question {
-  id Int [pk, increment]
+  id String [pk]
   question String [not null]
-  quiz_id Int [not null]
+  quiz_id String [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
   options Option [not null]
@@ -55,10 +61,10 @@ Table Question {
 }
 
 Table Option {
-  id Int [pk, increment]
+  id String [pk]
   option String [not null]
   is_correct Boolean [not null]
-  question_id Int [not null]
+  question_id String [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
   question Question [not null]
@@ -66,9 +72,9 @@ Table Option {
 }
 
 Table UserQuiz {
-  id Int [pk, increment]
-  user_id Int [not null]
-  quiz_id Int [not null]
+  id String [pk]
+  user_id String [not null]
+  quiz_id String [not null]
   score Int [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
@@ -78,10 +84,10 @@ Table UserQuiz {
 }
 
 Table UserAnswer {
-  id Int [pk, increment]
-  user_quiz_id Int [not null]
-  question_id Int [not null]
-  option_id Int [not null]
+  id String [pk]
+  user_quiz_id String [not null]
+  question_id String [not null]
+  option_id String [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
   user_quiz UserQuiz [not null]
@@ -89,20 +95,37 @@ Table UserAnswer {
   option Option [not null]
 }
 
+Table Session {
+  id String [pk]
+  session_id String [unique, not null]
+  user_id String [not null]
+  quiz_id String [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  user User [not null]
+  quiz Quiz [not null]
+}
+
 Ref: User.role_id > Role.id
 
 Ref: Quiz.category_id > Category.id
 
-Ref: Question.quiz_id > Quiz.id
+Ref: Quiz.user_id > User.id
 
-Ref: Option.question_id > Question.id
+Ref: Question.quiz_id > Quiz.id [delete: Cascade]
 
-Ref: UserQuiz.user_id > User.id
+Ref: Option.question_id > Question.id [delete: Cascade]
 
-Ref: UserQuiz.quiz_id > Quiz.id
+Ref: UserQuiz.user_id > User.id [delete: Cascade]
 
-Ref: UserAnswer.user_quiz_id > UserQuiz.id
+Ref: UserQuiz.quiz_id > Quiz.id [delete: Cascade]
 
-Ref: UserAnswer.question_id > Question.id
+Ref: UserAnswer.user_quiz_id > UserQuiz.id [delete: Cascade]
 
-Ref: UserAnswer.option_id > Option.id
+Ref: UserAnswer.question_id > Question.id [delete: Cascade]
+
+Ref: UserAnswer.option_id > Option.id [delete: Cascade]
+
+Ref: Session.user_id > User.id [delete: Cascade]
+
+Ref: Session.quiz_id > Quiz.id [delete: Cascade]

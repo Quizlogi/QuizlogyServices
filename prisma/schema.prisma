@@ -18,7 +18,7 @@ datasource db {
 }
 
 model User {
-  id         Int        @id @default(autoincrement())
+  id         String     @id @default(uuid())
   name       String?
   username   String     @unique
   email      String     @unique
@@ -29,6 +29,7 @@ model User {
   role       Role       @relation(fields: [role_id], references: [id])
   UserQuiz   UserQuiz[]
   Session    Session[]
+  Quiz       Quiz[]
 }
 
 model Role {
@@ -40,20 +41,23 @@ model Role {
 }
 
 model Quiz {
-  id          Int        @id @default(autoincrement())
+  id          String     @id @default(uuid())
   title       String
   description String
-  category_id Int
+  image       String
+  category_id String
+  user_id     String
   created_at  DateTime   @default(now())
   updated_at  DateTime   @updatedAt
   category    Category   @relation(fields: [category_id], references: [id])
+  user        User       @relation(fields: [user_id], references: [id])
   questions   Question[]
   UserQuiz    UserQuiz[]
   Session     Session[]
 }
 
 model Category {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(uuid())
   name       String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -61,58 +65,58 @@ model Category {
 }
 
 model Question {
-  id         Int          @id @default(autoincrement())
+  id         String       @id @default(uuid())
   question   String
-  quiz_id    Int
+  quiz_id    String
   created_at DateTime     @default(now())
   updated_at DateTime     @updatedAt
   options    Option[]
-  quiz       Quiz         @relation(fields: [quiz_id], references: [id])
+  quiz       Quiz         @relation(fields: [quiz_id], references: [id], onDelete: Cascade)
   UserAnswer UserAnswer[]
 }
 
 model Option {
-  id          Int          @id @default(autoincrement())
+  id          String       @id @default(uuid())
   option      String
   is_correct  Boolean
-  question_id Int
+  question_id String
   created_at  DateTime     @default(now())
   updated_at  DateTime     @updatedAt
-  question    Question     @relation(fields: [question_id], references: [id])
+  question    Question     @relation(fields: [question_id], references: [id], onDelete: Cascade)
   UserAnswer  UserAnswer[]
 }
 
 model UserQuiz {
-  id         Int          @id @default(autoincrement())
-  user_id    Int
-  quiz_id    Int
+  id         String       @id @default(uuid())
+  user_id    String
+  quiz_id    String
   score      Int
   created_at DateTime     @default(now())
   updated_at DateTime     @updatedAt
-  user       User         @relation(fields: [user_id], references: [id])
-  quiz       Quiz         @relation(fields: [quiz_id], references: [id])
+  user       User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  quiz       Quiz         @relation(fields: [quiz_id], references: [id], onDelete: Cascade)
   UserAnswer UserAnswer[]
 }
 
 model UserAnswer {
-  id           Int      @id @default(autoincrement())
-  user_quiz_id Int
-  question_id  Int
-  option_id    Int
+  id           String   @id @default(uuid())
+  user_quiz_id String
+  question_id  String
+  option_id    String   
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
-  user_quiz    UserQuiz @relation(fields: [user_quiz_id], references: [id])
-  question     Question @relation(fields: [question_id], references: [id])
-  option       Option   @relation(fields: [option_id], references: [id])
+  user_quiz    UserQuiz @relation(fields: [user_quiz_id], references: [id], onDelete: Cascade)
+  question     Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  option       Option   @relation(fields: [option_id], references: [id], onDelete: Cascade)
 }
 
-// buatkan session saat user sedang melakukan quiz
 model Session {
-  id         Int      @id @default(autoincrement())
-  user_id    Int
-  quiz_id    Int
+  id         String   @id @default(uuid())
+  session_id String   @unique @default(uuid())
+  user_id    String
+  quiz_id    String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  user       User     @relation(fields: [user_id], references: [id])
-  quiz       Quiz     @relation(fields: [quiz_id], references: [id])
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  quiz       Quiz     @relation(fields: [quiz_id], references: [id], onDelete: Cascade)
 }

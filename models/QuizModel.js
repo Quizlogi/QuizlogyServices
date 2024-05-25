@@ -46,6 +46,28 @@ class QuizModel {
 
         return quizzes;
     }
+
+    async createQuiz(data, options) {
+        const quiz = await this.db.create({
+            data: {
+                ...data
+            }
+        });
+
+        await prisma.option.createMany({
+            data: {
+                ...options.map(option => ({
+                    ...option,
+                    quiz_id: quiz.id
+                }))
+            }
+        });
+
+        return {
+            ...quiz,
+            options
+        }
+    }
 }
 
 module.exports = QuizModel;

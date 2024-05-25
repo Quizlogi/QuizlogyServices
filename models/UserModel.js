@@ -1,5 +1,20 @@
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const bcrypt = require('bcrypt');
+
+const prisma = new PrismaClient().$extends({
+    // auto encrypt password
+    query: {
+        user: {
+            $allOperations({ operation, args, query }) {
+                if (['create', 'update'].includes(operation) && args.data['password']) {
+                    args.data['password'] = bcrypt.hashSync(args.data['password'], 10);
+                }
+
+                return query(args);
+            }
+        }
+    }
+});
 
 class UserModel {
     constructor() {
@@ -7,9 +22,7 @@ class UserModel {
     }
 
     /**
-     * 
-     * @param {Number[]} roleId 
-     * @returns 
+     * @param {number[]} roleId
      */
     async getUserByRoleId(roleId = []) { 
         return await this.db.findMany({
@@ -34,9 +47,7 @@ class UserModel {
     }
 
     /**
-     * 
-     * @param {number} userId 
-     * @returns 
+     * @param {number} userId
      */
     async getUserById(userId) {
         return await this.db.findUnique({
@@ -53,7 +64,39 @@ class UserModel {
                 }
             },
             where: {
-                id: parseInt(userId)
+                id: userId
+            }
+        });
+    }
+
+    /**
+     * 
+     * @param {Object} data 
+     * @returns 
+     */
+    async createUser(data) {
+        return await this.db.create({
+            data: {
+                ...data
+            }
+        });
+    }
+
+    async updateUser(id, data) {
+        return await this.db.update({
+            where: {
+                id
+            },
+            data: {
+                ...data
+            }
+        });
+    }
+
+    async deleteUser(id) {
+        return await this.db.delete({
+            where: {
+                id
             }
         });
     }

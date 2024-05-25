@@ -1,5 +1,5 @@
 const { ServerRoute, Refs } = require('@hapi/hapi');
-const { allQuiz, discovery, me } = require('../../controllers/UserController');
+const { allQuiz, discovery, me, quizDetail } = require('../../controllers/UserController');
 
 /**
  * @type {ServerRoute<Refs>[]}
@@ -20,6 +20,14 @@ module.exports = [
             auth: false
         },
         handler: allQuiz
+    },
+    {
+        method: 'GET',
+        path: '/api/quiz/{id}',
+        config: {
+            auth: false
+        },
+        handler: quizDetail
     },
     {
         method: 'GET',
