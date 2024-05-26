@@ -10,6 +10,13 @@ const {
   editCategory,
   removeCategory,
   editQuiz,
+  getAllQuestion,
+  getQuestion,
+  createQuestion,
+  editQuestion,
+  removeQuestion,
+  getAllOptions,
+  createOption,
 } = require("../../controllers/InstructureController");
 
 /**
@@ -64,6 +71,7 @@ module.exports = [
       auth: "jwt",
       payload: {
         multipart: true,
+        maxBytes: 52428800,
       },
     },
   },
@@ -74,6 +82,7 @@ module.exports = [
       auth: "jwt",
       payload: {
         multipart: true,
+        maxBytes: 52428800,
       },
     },
     handler: editQuiz,
@@ -81,7 +90,7 @@ module.exports = [
   {
     method: "GET",
     path: "/api/instructure/quiz",
-    config: {
+    options: {
       auth: "jwt",
     },
     handler: allQuiz,
@@ -89,9 +98,73 @@ module.exports = [
   {
     method: "GET",
     path: "/api/instructure/quiz/{id}",
-    config: {
+    options: {
       auth: "jwt",
     },
     handler: quizDetail,
+  },
+  {
+    method: "GET",
+    path: "/api/instructure/quiz/{id}/question",
+    options: {
+      auth: "jwt",
+    },
+    handler: getAllQuestion,
+  },
+  {
+    method: "POST",
+    path: "/api/instructure/quiz/{id}/question",
+    options: {
+      auth: "jwt",
+    },
+    handler: createQuestion,
+  },
+  {
+    method: "PUT",
+    path: "/api/instructure/quiz/{id}/question/{questionId}",
+    options: {
+      auth: "jwt",
+    },
+    handler: editQuestion,
+  },
+  {
+    method: "GET",
+    path: "/api/instructure/question",
+    options: {
+      auth: "jwt",
+    },
+    handler: getAllQuestion,
+  },
+  {
+    method: "GET",
+    path: "/api/instructure/question/{id}",
+    options: {
+      auth: "jwt",
+    },
+    handler: getQuestion,
+  },
+  {
+    method: "DELETE",
+    path: "/api/instructure/question/{id}",
+    options: {
+      auth: "jwt",
+    },
+    handler: removeQuestion,
+  },
+  {
+    method: "GET",
+    path: "/api/instructure/question/{id}/option",
+    options: {
+      auth: "jwt",
+    },
+    handler: getAllOptions,
+  },
+  {
+    method: "POST",
+    path: "/api/instructure/question/{id}/option",
+    options: {
+      auth: "jwt",
+    },
+    handler: createOption,
   },
 ];

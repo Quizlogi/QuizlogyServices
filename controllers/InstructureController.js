@@ -3,6 +3,8 @@ const fs = require("fs");
 const QuizModel = require("../models/QuizModel");
 const { JSONParse } = require("../utils");
 const CategoryModel = require("../models/CategoryModel");
+const QuestionModel = require("../models/QuestionModel");
+const OptionModel = require("../models/OptionModel");
 
 /**
  *
@@ -306,6 +308,12 @@ const allQuiz = async (request, h) => {
   }
 };
 
+/**
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ * @returns
+ */
 const quizDetail = async (request, h) => {
   try {
     const { credentials } = request.auth;
@@ -349,6 +357,12 @@ const quizDetail = async (request, h) => {
   }
 };
 
+/**
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ * @returns
+ */
 const editQuiz = async (request, h) => {
   const now = Date.now();
   try {
@@ -422,6 +436,354 @@ const editQuiz = async (request, h) => {
   }
 };
 
+/**
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ * @returns
+ */
+const getAllQuestion = async (request, h) => {
+  try {
+    const { credentials } = request.auth;
+    if (credentials.role !== 2)
+      return h
+        .response({
+          message: "Forbidden",
+        })
+        .code(403);
+
+    const { id } = request.params;
+
+    const Question = new QuestionModel();
+
+    const question = await Question.allQuestion(id);
+
+    return h.response({
+      message: "success get all question",
+      data: question,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+/**
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ * @returns
+ */
+const getQuestion = async (request, h) => {
+  try {
+    const { credentials } = request.auth;
+    if (credentials.role !== 2)
+      return h
+        .response({
+          message: "Forbidden",
+        })
+        .code(403);
+
+    const Question = new QuestionModel();
+    const { id } = request.params;
+
+    if (!id)
+      return h
+        .response({
+          message: "Invalid payload",
+        })
+        .code(400);
+
+    const question = await Question.questionDetail(id);
+
+    return h.response({
+      message: "Success",
+      data: question,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+/**
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ * @returns
+ */
+const createQuestion = async (request, h) => {
+  try {
+    const { credentials } = request.auth;
+    if (credentials.role !== 2)
+      return h
+        .response({
+          message: "Forbidden",
+        })
+        .code(403);
+
+    const Question = new QuestionModel();
+    const Quiz = new QuizModel();
+
+    const { id } = request.params;
+    const { question } = request.payload;
+
+    if (!question)
+      return h
+        .response({
+          message: "Invalid payload",
+        })
+        .code(400);
+
+    // check quiz id exists
+    const quizExists = await Quiz.db.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!quizExists)
+      return h
+        .response({
+          message: "Quiz not found",
+        })
+        .code(404);
+
+    const data = await Question.createQuestion({
+      question,
+      quiz_id: id,
+    });
+
+    return h.response({
+      message: "Success create question",
+      data,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+/**
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ * @returns
+ */
+const editQuestion = async (request, h) => {
+  try {
+    const { credentials } = request.auth;
+    if (credentials.role !== 2)
+      return h
+        .response({
+          message: "Forbidden",
+        })
+        .code(403);
+
+    const Question = new QuestionModel();
+
+    const { id, questionId } = request.params;
+    const { question } = request.payload;
+
+    if (!id || !questionId || !question)
+      return h
+        .response({
+          message: "Invalid payload",
+        })
+        .code(400);
+
+    // check if quiz exists
+    const quizExists = await Question.db.findFirst({
+      where: {
+        quiz_id: id,
+      },
+    });
+
+    if (!quizExists)
+      return h
+        .response({
+          message: "Quiz not found",
+        })
+        .code(404);
+
+    const questionExists = await Question.db.findUnique({
+      where: {
+        id: questionId,
+      },
+    });
+
+    if (!questionExists)
+      return h
+        .response({
+          message: "Question not found",
+        })
+        .code(404);
+
+    const data = await Question.updateQuestion(questionId, {
+      question,
+    });
+
+    return h.response({
+      message: "Success update question",
+      data,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+/**
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ * @returns
+ */
+const removeQuestion = async (request, h) => {
+  try {
+    const { credentials } = request.auth;
+    if (credentials.role !== 2)
+      return h
+        .response({
+          message: "Forbidden",
+        })
+        .code(403);
+
+    const Question = new QuestionModel();
+
+    const { id } = request.params;
+
+    if (!id)
+      return h
+        .response({
+          message: "Invalid payload",
+        })
+        .code(400);
+
+    const questionExists = await Question.db.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!questionExists)
+      return h
+        .response({
+          message: "Question not found",
+        })
+        .code(404);
+
+    await Question.deleteQuestion(id);
+
+    return h.response({
+      message: "Success delete question",
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+/**
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ * @returns
+ */
+const getAllOptions = async (request, h) => {
+  try {
+    const Option = new OptionModel();
+
+    const { credentials } = request.auth;
+    if (credentials.role !== 2)
+      return h
+        .response({
+          message: "Forbidden",
+        })
+        .code(403);
+
+    const { id } = request.params;
+
+    const options = await Option.allOption(id);
+
+    return h.response({
+      message: "Success",
+      data: options,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+/**
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ * @returns
+ */
+const getOption = async (request, h) => {
+  try {
+    const Option = new OptionModel();
+
+    const { credentials } = request.auth;
+    if (credentials.role !== 2)
+      return h
+        .response({
+          message: "Forbidden",
+        })
+        .code(403);
+
+    const { id } = request.params;
+
+    const option = await Option.optionDetail(id);
+
+    return h.response({
+      message: "Success",
+      data: option,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const createOption = async (request, h) => {
+  try {
+    const Option = new OptionModel();
+    const Question = new QuestionModel();
+
+    const { id } = request.params;
+    const { option, is_correct } = request.payload;
+
+    if (!option || !is_correct || !id)
+      return h
+        .response({
+          message: "Invalid payload",
+        })
+        .code(400);
+
+    const questionExists = await Question.db.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!questionExists)
+      return h
+        .response({
+          message: "Question not found",
+        })
+        .code(404);
+
+    const data = await Option.createOption({
+      option,
+      is_correct,
+      question_id: id,
+    });
+
+    return h.response({
+      message: "Success create option",
+      data,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 module.exports = {
   getAllCategory,
   getCategory,
@@ -432,4 +794,12 @@ module.exports = {
   editQuiz,
   allQuiz,
   quizDetail,
+  getAllQuestion,
+  getQuestion,
+  createQuestion,
+  editQuestion,
+  removeQuestion,
+  getAllOptions,
+  getOption,
+  createOption,
 };
