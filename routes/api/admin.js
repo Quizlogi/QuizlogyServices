@@ -1,53 +1,58 @@
-const { ServerRoute, Refs } = require('@hapi/hapi');
-const { getUser, getUserById, insertUser, updateUser, removeUser } = require('../../controllers/AdminController');
+const { ServerRoute, Refs } = require("@hapi/hapi");
+const {
+  getUser,
+  getUserById,
+  insertUser,
+  updateUser,
+  removeUser,
+} = require("../../controllers/AdminController");
 
 /**
  * @type {ServerRoute<Refs>[]}
  */
 module.exports = [
-    {
-        method: 'GET',
-        path: '/api/admin/users',
-        config: {
-            auth: 'jwt',
-            tags: ['main']
-        },
-        handler: getUser
+  {
+    method: "GET",
+    path: "/api/admin/users",
+    config: {
+      auth: "jwt",
+      tags: ["main"],
     },
-    {
-        method: 'GET',
-        path: '/api/admin/users/{id}',
-        config: {
-            auth: 'jwt',
-            tags: ['main']
-        },
-        handler: getUserById
+    handler: getUser,
+  },
+  {
+    method: "GET",
+    path: "/api/admin/users/{id}",
+    config: {
+      auth: "jwt",
+      tags: ["main"],
     },
-    {
-        method: 'PUT',
-        path: '/api/admin/users/{id}',
-        config: {
-            auth: 'jwt',
-            tags: ['main']
-        },
-        handler: updateUser
+    handler: getUserById,
+  },
+  {
+    method: "PUT",
+    path: "/api/admin/users/{id}",
+    config: {
+      auth: "jwt",
+      tags: ["main"],
     },
-    {
-        method: 'POST',
-        path: '/api/admin/users',
-        config: {
-            auth: 'jwt',
-            tags: ['main']
-        },
-        handler: insertUser
+    handler: updateUser,
+  },
+  {
+    method: "POST",
+    path: "/api/admin/users",
+    config: {
+      auth: "jwt",
+      tags: ["main"],
     },
-    {
-        method: 'DELETE',
-        path: '/api/admin/users/{id}',
-        config: {
-            auth: 'jwt',
-        },
-        handler: removeUser
-    }
-    
+    handler: insertUser,
+  },
+  {
+    method: "DELETE",
+    path: "/api/admin/users/{id}",
+    config: {
+      auth: "jwt",
+    },
+    handler: removeUser,
+  },
 ];
