@@ -17,6 +17,9 @@ const {
   removeQuestion,
   getAllOptions,
   createOption,
+  editOption,
+  getOption,
+  removeOption,
 } = require("../../controllers/InstructureController");
 
 /**
@@ -166,5 +169,37 @@ module.exports = [
       auth: "jwt",
     },
     handler: createOption,
+  },
+  {
+    method: "PUT",
+    path: "/api/instructure/question/{id}/option/{optionId}",
+    options: {
+      auth: "jwt",
+    },
+    handler: editOption,
+  },
+  {
+    method: "GET",
+    path: "/api/instructure/option",
+    options: {
+      auth: "jwt",
+    },
+    handler: getAllOptions,
+  },
+  {
+    method: "GET",
+    path: "/api/instructure/option/{id}",
+    options: {
+      auth: "jwt",
+    },
+    handler: getOption,
+  },
+  {
+    method: "DELETE",
+    path: "/api/instructure/option/{id}",
+    options: {
+      auth: "jwt",
+    },
+    handler: removeOption,
   },
 ];

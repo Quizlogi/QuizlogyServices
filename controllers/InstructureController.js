@@ -784,6 +784,97 @@ const createOption = async (request, h) => {
   }
 };
 
+const editOption = async (request, h) => {
+  try {
+    const Option = new OptionModel();
+    const Question = new QuestionModel();
+
+    const { id, optionId } = request.params;
+    const { option, is_correct } = request.payload;
+
+    if (!option || !is_correct || !id || !optionId)
+      return h
+        .response({
+          message: "Invalid payload",
+        })
+        .code(400);
+
+    const questionExists = await Question.db.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!questionExists)
+      return h
+        .response({
+          message: "Question not found",
+        })
+        .code(404);
+
+    const optionExists = await Option.db.findUnique({
+      where: {
+        id: optionId,
+      },
+    });
+
+    if (!optionExists)
+      return h
+        .response({
+          message: "Option not found",
+        })
+        .code(404);
+
+    const data = await Option.updateOption(optionId, {
+      option,
+      is_correct,
+    });
+
+    return h.response({
+      message: "Success update option",
+      data,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const removeOption = async (request, h) => {
+  try {
+    const Option = new OptionModel();
+
+    const { id } = request.params;
+
+    if (!id)
+      return h
+        .response({
+          message: "Invalid payload",
+        })
+        .code(400);
+
+    const optionExists = await Option.db.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!optionExists)
+      return h
+        .response({
+          message: "Option not found",
+        })
+        .code(404);
+
+    await Option.deleteOption(id);
+
+    return h.response({
+      message: "Success delete option",
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 module.exports = {
   getAllCategory,
   getCategory,
@@ -802,4 +893,6 @@ module.exports = {
   getAllOptions,
   getOption,
   createOption,
+  editOption,
+  removeOption,
 };
