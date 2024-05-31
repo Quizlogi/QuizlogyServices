@@ -37,8 +37,8 @@ Table Quiz {
   category Category [not null]
   user User [not null]
   questions Question [not null]
-  UserQuiz UserQuiz [not null]
-  Session Session [not null]
+  user_quiz UserQuiz [not null]
+  session Session [not null]
 }
 
 Table Category {

@@ -52,8 +52,8 @@ model Quiz {
   category    Category   @relation(fields: [category_id], references: [id])
   user        User       @relation(fields: [user_id], references: [id])
   questions   Question[]
-  UserQuiz    UserQuiz[]
-  Session     Session[]
+  user_quiz    UserQuiz[]
+  session     Session[]
 }
 
 model Category {
