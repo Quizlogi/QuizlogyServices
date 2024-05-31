@@ -4,6 +4,10 @@ const {
   discovery,
   me,
   quizDetail,
+  createSession,
+  getSession,
+  getQuestionsBySessionId,
+  endSession,
 } = require("../../controllers/UserController");
 
 /**
@@ -12,7 +16,7 @@ const {
 module.exports = [
   {
     method: "GET",
-    config: {
+    options: {
       auth: "jwt",
     },
     path: "/api/me",
@@ -21,7 +25,7 @@ module.exports = [
   {
     method: "GET",
     path: "/api/quiz",
-    config: {
+    options: {
       auth: false,
     },
     handler: allQuiz,
@@ -29,7 +33,7 @@ module.exports = [
   {
     method: "GET",
     path: "/api/quiz/{id}",
-    config: {
+    options: {
       auth: false,
     },
     handler: quizDetail,
@@ -37,9 +41,41 @@ module.exports = [
   {
     method: "GET",
     path: "/api/quiz/discovery",
-    config: {
+    options: {
       auth: false,
     },
     handler: discovery,
+  },
+  {
+    method: "POST",
+    path: "/api/quiz/session",
+    options: {
+      auth: "jwt",
+    },
+    handler: createSession,
+  },
+  {
+    method: "GET",
+    path: "/api/quiz/session",
+    options: {
+      auth: "jwt",
+    },
+    handler: getSession,
+  },
+  {
+    method: "GET",
+    path: "/api/quiz/session/{session_id}",
+    options: {
+      auth: "jwt",
+    },
+    handler: getQuestionsBySessionId,
+  },
+  {
+    method: "POST",
+    path: "/api/quiz/session/{session_id}/end",
+    options: {
+      auth: "jwt",
+    },
+    handler: endSession,
   },
 ];

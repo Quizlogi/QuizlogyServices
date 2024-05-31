@@ -1,6 +1,7 @@
 const { Request, ResponseToolkit } = require("@hapi/hapi");
 
 const QuizModel = require("../models/QuizModel");
+const SessionModel = require("../models/SessionModel");
 
 /**
  *
@@ -46,6 +47,11 @@ const allQuiz = async (request, h) => {
     const quiz = await Quiz.db.findMany({
       include: {
         category: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
 
@@ -75,6 +81,24 @@ const quizDetail = async (request, h) => {
         id: true,
         title: true,
         description: true,
+        image: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        session: {
+          select: {
+            id: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
       where: {
         id,
@@ -97,9 +121,101 @@ const quizDetail = async (request, h) => {
   }
 };
 
+/**
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ */
+const createSession = async (request, h) => {
+  const Session = new SessionModel();
+
+  const { credentials } = request.auth;
+  const { quiz_id } = request.payload ?? {};
+
+  if (!quiz_id) return h.response({ message: "Quiz ID is required" }).code(400);
+
+  const sessionExists = await Session.getSessionByUserId(credentials.id);
+  if (sessionExists.length > 0)
+    return h
+      .response({
+        message: "Session already exists",
+      })
+      .code(400);
+
+  const session = await Session.createSession(credentials.id, quiz_id);
+
+  return h.response({
+    message: "Success",
+    data: session,
+  });
+};
+
+/**
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ * @returns
+ */
+const getSession = async (request, h) => {
+  const Session = new SessionModel();
+
+  const { credentials } = request.auth;
+
+  const session = await Session.getSessionByUserId(credentials.id);
+
+  return h.response({
+    message: "Success",
+    data: session,
+  });
+};
+
+const getQuestionsBySessionId = async (request, h) => {
+  const Session = new SessionModel();
+
+  const { credentials } = request.auth;
+  const { session_id } = request.params;
+
+  const session = await Session.getQuestionsBySessionId(session_id);
+
+  console.log(session);
+
+  if (session.user.id !== credentials.id)
+    return h.response({
+      message: "Unauthorized",
+    });
+
+  return h.response({
+    message: "Success",
+    data: session,
+  });
+};
+
+const endSession = async (request, h) => {
+  const Session = new SessionModel();
+
+  const { credentials } = request.auth;
+  const { session_id } = request.params;
+  const { data } = request.payload ?? {};
+
+  const session = await Session.endSession(session_id, data);
+
+  if (session.user.id !== credentials.id)
+    return h.response({
+      message: "Unauthorized",
+    });
+
+  return h.response({
+    message: "Success",
+  });
+};
+
 module.exports = {
   me,
   discovery,
   allQuiz,
   quizDetail,
+  createSession,
+  getSession,
+  getQuestionsBySessionId,
+  endSession,
 };
