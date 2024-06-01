@@ -83,12 +83,27 @@ const insertUser = async (request, h) => {
         })
         .code(409);
 
-    const user = await User.createUser({
+    await User.createUser({
       name: payload.name,
       username: payload.username,
       email: payload.email,
       password: payload.password,
       role_id: payload.role_id,
+    });
+
+    // get user
+    const user = await User.db.findFirst({
+      where: {
+        OR: [{ email: payload.email }, { username: payload.username }],
+      },
+      include: {
+        role: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
 
     return h

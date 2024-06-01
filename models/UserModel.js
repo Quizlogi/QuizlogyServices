@@ -78,6 +78,7 @@ class UserModel {
     return await this.db.create({
       data: {
         ...data,
+        role_id: parseInt(data.role_id),
       },
     });
   }
