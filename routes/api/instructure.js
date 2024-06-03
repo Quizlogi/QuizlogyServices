@@ -15,11 +15,12 @@ const {
   createQuestion,
   editQuestion,
   removeQuestion,
-  getAllOptions,
+  getAllconfig,
   createOption,
   editOption,
   getOption,
   removeOption,
+  getAllOptions,
 } = require("../../controllers/InstructureController");
 
 /**
@@ -29,7 +30,7 @@ module.exports = [
   {
     method: "GET",
     path: "/api/instructure/category",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: getAllCategory,
@@ -37,7 +38,7 @@ module.exports = [
   {
     method: "GET",
     path: "/api/instructure/category/{id}",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: getCategory,
@@ -46,7 +47,7 @@ module.exports = [
     method: "POST",
     path: "/api/instructure/category",
     handler: createCategory,
-    options: {
+    config: {
       auth: "jwt",
     },
   },
@@ -54,7 +55,7 @@ module.exports = [
     method: "PUT",
     path: "/api/instructure/category/{id}",
     handler: editCategory,
-    options: {
+    config: {
       auth: "jwt",
     },
   },
@@ -62,7 +63,7 @@ module.exports = [
     method: "DELETE",
     path: "/api/instructure/category/{id}",
     handler: removeCategory,
-    options: {
+    config: {
       auth: "jwt",
     },
   },
@@ -70,7 +71,7 @@ module.exports = [
     path: "/api/instructure/quiz",
     method: "POST",
     handler: createQuiz,
-    options: {
+    config: {
       auth: "jwt",
       payload: {
         multipart: true,
@@ -81,7 +82,7 @@ module.exports = [
   {
     method: "PUT",
     path: "/api/instructure/quiz/{id}",
-    options: {
+    config: {
       auth: "jwt",
       payload: {
         multipart: true,
@@ -93,7 +94,7 @@ module.exports = [
   {
     method: "GET",
     path: "/api/instructure/quiz",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: allQuiz,
@@ -101,7 +102,7 @@ module.exports = [
   {
     method: "GET",
     path: "/api/instructure/quiz/{id}",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: quizDetail,
@@ -109,7 +110,7 @@ module.exports = [
   {
     method: "GET",
     path: "/api/instructure/quiz/{id}/question",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: getAllQuestion,
@@ -117,7 +118,7 @@ module.exports = [
   {
     method: "POST",
     path: "/api/instructure/quiz/{id}/question",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: createQuestion,
@@ -125,7 +126,7 @@ module.exports = [
   {
     method: "PUT",
     path: "/api/instructure/quiz/{id}/question/{questionId}",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: editQuestion,
@@ -133,7 +134,7 @@ module.exports = [
   {
     method: "GET",
     path: "/api/instructure/question",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: getAllQuestion,
@@ -141,7 +142,7 @@ module.exports = [
   {
     method: "GET",
     path: "/api/instructure/question/{id}",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: getQuestion,
@@ -149,7 +150,7 @@ module.exports = [
   {
     method: "DELETE",
     path: "/api/instructure/question/{id}",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: removeQuestion,
@@ -157,7 +158,7 @@ module.exports = [
   {
     method: "GET",
     path: "/api/instructure/question/{id}/option",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: getAllOptions,
@@ -165,7 +166,7 @@ module.exports = [
   {
     method: "POST",
     path: "/api/instructure/question/{id}/option",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: createOption,
@@ -173,7 +174,7 @@ module.exports = [
   {
     method: "PUT",
     path: "/api/instructure/question/{id}/option/{optionId}",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: editOption,
@@ -181,7 +182,7 @@ module.exports = [
   {
     method: "GET",
     path: "/api/instructure/option",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: getAllOptions,
@@ -189,7 +190,7 @@ module.exports = [
   {
     method: "GET",
     path: "/api/instructure/option/{id}",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: getOption,
@@ -197,7 +198,7 @@ module.exports = [
   {
     method: "DELETE",
     path: "/api/instructure/option/{id}",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: removeOption,
