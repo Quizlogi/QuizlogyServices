@@ -16,7 +16,7 @@ const {
 module.exports = [
   {
     method: "GET",
-    options: {
+    config: {
       auth: "jwt",
     },
     path: "/api/me",
@@ -25,7 +25,7 @@ module.exports = [
   {
     method: "GET",
     path: "/api/quiz",
-    options: {
+    config: {
       auth: false,
     },
     handler: allQuiz,
@@ -33,7 +33,7 @@ module.exports = [
   {
     method: "GET",
     path: "/api/quiz/{id}",
-    options: {
+    config: {
       auth: false,
     },
     handler: quizDetail,
@@ -41,7 +41,7 @@ module.exports = [
   {
     method: "GET",
     path: "/api/quiz/discovery",
-    options: {
+    config: {
       auth: false,
     },
     handler: discovery,
@@ -49,7 +49,7 @@ module.exports = [
   {
     method: "POST",
     path: "/api/quiz/session",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: createSession,
@@ -57,7 +57,7 @@ module.exports = [
   {
     method: "GET",
     path: "/api/quiz/session",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: getSession,
@@ -65,7 +65,7 @@ module.exports = [
   {
     method: "GET",
     path: "/api/quiz/session/{session_id}",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: getQuestionsBySessionId,
@@ -73,7 +73,7 @@ module.exports = [
   {
     method: "POST",
     path: "/api/quiz/session/{session_id}/end",
-    options: {
+    config: {
       auth: "jwt",
     },
     handler: endSession,
