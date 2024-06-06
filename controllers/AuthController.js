@@ -47,6 +47,7 @@ const Login = async (request, h) => {
       email: user.email,
       role: user.role_id,
       username: user.username,
+      name: user.name,
     });
 
     return h
