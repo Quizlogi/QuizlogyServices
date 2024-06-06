@@ -88,7 +88,7 @@ const quizDetail = async (request, h) => {
             name: true,
           },
         },
-        session: {
+        Session: {
           select: {
             id: true,
             user: {
