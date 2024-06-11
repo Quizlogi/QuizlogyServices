@@ -798,9 +798,9 @@ const createOption = async (request, h) => {
     const Question = new QuestionModel();
 
     const { id } = request.params;
-    const { option, is_correct } = request.payload;
+    const { option } = request.payload;
 
-    if (!option || !is_correct || !id)
+    if (!option || !id)
       return h
         .response({
           message: "Invalid payload",
@@ -822,7 +822,6 @@ const createOption = async (request, h) => {
 
     const data = await Option.createOption({
       option,
-      is_correct,
       question_id: id,
     });
 
@@ -879,6 +878,18 @@ const editOption = async (request, h) => {
     const data = await Option.updateOption(optionId, {
       option,
       is_correct,
+    });
+
+    await Option.db.updateMany({
+      where: {
+        question_id: id,
+        id: {
+          not: optionId,
+        },
+      },
+      data: {
+        is_correct: false,
+      },
     });
 
     return h.response({
