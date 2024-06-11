@@ -78,7 +78,7 @@ model Question {
 model Option {
   id          String       @id @default(uuid())
   option      String
-  is_correct  Boolean
+  is_correct  Boolean      @default(false)
   question_id String
   created_at  DateTime     @default(now())
   updated_at  DateTime     @updatedAt
