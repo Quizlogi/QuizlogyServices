@@ -127,27 +127,45 @@ const quizDetail = async (request, h) => {
  * @param {ResponseToolkit} h
  */
 const createSession = async (request, h) => {
-  const Session = new SessionModel();
+  try {
+    const Session = new SessionModel();
+    const Quiz = new QuizModel();
 
-  const { credentials } = request.auth;
-  const { quiz_id } = request.payload ?? {};
+    const { credentials } = request.auth;
+    const { quiz_id } = request.payload ?? {};
 
-  if (!quiz_id) return h.response({ message: "Quiz ID is required" }).code(400);
+    if (!quiz_id)
+      return h.response({ message: "Quiz ID is required" }).code(400);
 
-  const sessionExists = await Session.getSessionByUserId(credentials.id);
-  if (sessionExists.length > 0)
-    return h
-      .response({
-        message: "Session already exists",
-      })
-      .code(400);
+    // check if quiz_id is valid
+    const quiz = await Quiz.db.findFirst({
+      where: {
+        id: quiz_id,
+      },
+    });
 
-  const session = await Session.createSession(credentials.id, quiz_id);
+    if (!quiz)
+      return h.response({
+        message: "Quiz not found",
+      });
 
-  return h.response({
-    message: "Success",
-    data: session,
-  });
+    const sessionExists = await Session.getSessionByUserId(credentials.id);
+    if (sessionExists.length > 0)
+      return h
+        .response({
+          message: "Session already exists",
+        })
+        .code(400);
+
+    const session = await Session.createSession(credentials.id, quiz_id);
+
+    return h.response({
+      message: "Success",
+      data: session,
+    });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 /**

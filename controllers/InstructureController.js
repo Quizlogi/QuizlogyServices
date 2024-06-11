@@ -842,7 +842,7 @@ const editOption = async (request, h) => {
     const { id, optionId } = request.params;
     const { option, is_correct } = request.payload;
 
-    if (!option || !is_correct || !id || !optionId)
+    if (!option || !id || !optionId)
       return h
         .response({
           message: "Invalid payload",
