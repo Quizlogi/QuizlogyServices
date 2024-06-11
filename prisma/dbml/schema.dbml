@@ -63,7 +63,7 @@ Table Question {
 Table Option {
   id String [pk]
   option String [not null]
-  is_correct Boolean [not null]
+  is_correct Boolean [not null, default: false]
   question_id String [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
