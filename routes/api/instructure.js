@@ -109,7 +109,7 @@ module.exports = [
     handler: quizDetail,
   },
   {
-    method: "GET",
+    method: "DELETE",
     path: "/api/instructure/quiz/{id}",
     config: {
       auth: "jwt",
