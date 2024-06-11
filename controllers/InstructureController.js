@@ -437,6 +437,57 @@ const editQuiz = async (request, h) => {
 };
 
 /**
+ * 
+ * @param {Request} request 
+ * @param {ResponseToolkit} h 
+ */
+const removeQuiz = async (request, h) => {
+  try {
+    const { credentials } = request.auth;
+    if (credentials.role !== 2)
+      return h
+        .response({
+          message: "Forbidden",
+        })
+        .code(403);
+    
+    const Quiz = new QuizModel();
+    const { id } = request.params;
+    if (!id)
+      return h
+        .response({
+          message: "Invalid payload",
+        })
+        .code(400);
+    
+    const quiz = await Quiz.db.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!quiz)
+      return h
+        .response({
+          message: "Quiz not found",
+        })
+        .code(404);
+    
+    await Quiz.db.delete({
+      where: {
+        id,
+      },
+    });
+
+    return h.response({
+      message: "Success",
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+/**
  *
  * @param {Request} request
  * @param {ResponseToolkit} h
@@ -883,6 +934,7 @@ module.exports = {
   removeCategory,
   createQuiz,
   editQuiz,
+  removeQuiz,
   allQuiz,
   quizDetail,
   getAllQuestion,

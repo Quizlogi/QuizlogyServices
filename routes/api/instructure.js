@@ -21,6 +21,7 @@ const {
   getOption,
   removeOption,
   getAllOptions,
+  removeQuiz,
 } = require("../../controllers/InstructureController");
 
 /**
@@ -106,6 +107,14 @@ module.exports = [
       auth: "jwt",
     },
     handler: quizDetail,
+  },
+  {
+    method: "GET",
+    path: "/api/instructure/quiz/{id}",
+    config: {
+      auth: "jwt",
+    },
+    handler: removeQuiz,
   },
   {
     method: "GET",
