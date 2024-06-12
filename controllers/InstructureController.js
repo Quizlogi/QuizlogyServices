@@ -1,7 +1,10 @@
 const { Request, ResponseToolkit } = require("@hapi/hapi");
 const fs = require("fs");
-const QuizModel = require("../models/QuizModel");
+const sharp = require("sharp");
+
 const { JSONParse } = require("../utils");
+
+const QuizModel = require("../models/QuizModel");
 const CategoryModel = require("../models/CategoryModel");
 const QuestionModel = require("../models/QuestionModel");
 const OptionModel = require("../models/OptionModel");
@@ -255,8 +258,16 @@ const createQuiz = async (request, h) => {
         })
         .code(400);
 
-    const buffer = Buffer.from(image, "base64");
-    fs.writeFileSync(`uploads/${now}.png`, buffer);
+    // save image
+    const mime = image.split(";")[0].split(":")[1];
+    const buffer = Buffer.from(
+      image.replace(/^data:image\/\w+;base64,/, ""),
+      "base64"
+    );
+
+    const sharpImage = await sharp(buffer).toFormat("png").toBuffer();
+
+    fs.writeFileSync(`uploads/${now}.png`, sharpImage);
 
     const quizData = await Quiz.createQuiz({
       ...json,
@@ -437,9 +448,9 @@ const editQuiz = async (request, h) => {
 };
 
 /**
- * 
- * @param {Request} request 
- * @param {ResponseToolkit} h 
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
  */
 const removeQuiz = async (request, h) => {
   try {
@@ -450,7 +461,7 @@ const removeQuiz = async (request, h) => {
           message: "Forbidden",
         })
         .code(403);
-    
+
     const Quiz = new QuizModel();
     const { id } = request.params;
     if (!id)
@@ -459,7 +470,7 @@ const removeQuiz = async (request, h) => {
           message: "Invalid payload",
         })
         .code(400);
-    
+
     const quiz = await Quiz.db.findUnique({
       where: {
         id,
@@ -472,12 +483,14 @@ const removeQuiz = async (request, h) => {
           message: "Quiz not found",
         })
         .code(404);
-    
+
     await Quiz.db.delete({
       where: {
         id,
       },
     });
+
+    fs.unlinkSync(quiz.image);
 
     return h.response({
       message: "Success",
