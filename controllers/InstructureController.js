@@ -259,7 +259,6 @@ const createQuiz = async (request, h) => {
         .code(400);
 
     // save image
-    const mime = image.split(";")[0].split(":")[1];
     const buffer = Buffer.from(
       image.replace(/^data:image\/\w+;base64,/, ""),
       "base64"
@@ -427,8 +426,14 @@ const editQuiz = async (request, h) => {
         .code(400);
 
     if (image) {
-      const buffer = Buffer.from(image, "base64");
-      fs.writeFileSync(`uploads/${now}.png`, buffer);
+      const buffer = Buffer.from(
+        image.replace(/^data:image\/\w+;base64,/, ""),
+        "base64"
+      );
+
+      const sharpImage = await sharp(buffer).toFormat("png").toBuffer();
+
+      fs.writeFileSync(`uploads/${now}.png`, sharpImage);
     }
 
     const quizData = await Quiz.db.update({
