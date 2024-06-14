@@ -8,6 +8,8 @@ const {
   getSession,
   getQuestionsBySessionId,
   endSession,
+  updateUser,
+  historyQuiz,
 } = require("../../controllers/UserController");
 
 /**
@@ -21,6 +23,14 @@ module.exports = [
     },
     path: "/api/me",
     handler: me,
+  },
+  {
+    method: "PUT",
+    config: {
+      auth: "jwt",
+    },
+    path: "/api/me",
+    handler: updateUser,
   },
   {
     method: "GET",
@@ -37,6 +47,14 @@ module.exports = [
       auth: false,
     },
     handler: quizDetail,
+  },
+  {
+    method: "GET",
+    path: "/api/quiz/history",
+    config: {
+      auth: "jwt",
+    },
+    handler: historyQuiz,
   },
   {
     method: "GET",
