@@ -2,6 +2,8 @@ const { Request, ResponseToolkit } = require("@hapi/hapi");
 
 const QuizModel = require("../models/QuizModel");
 const SessionModel = require("../models/SessionModel");
+const UserModel = require("../models/UserModel");
+const UserQuizModel = require("../models/UserQuizModel");
 
 /**
  *
@@ -13,6 +15,25 @@ const me = async (request, h) => {
   return h.response({
     message: "Success",
     data: request.auth.credentials,
+  });
+};
+
+/**
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ * @returns
+ */
+const updateUser = async (request, h) => {
+  const User = new UserModel();
+
+  const { credentials } = request.auth;
+  const { data } = request.payload ?? {};
+
+  const user = await User.updateUser(credentials.id, data);
+
+  return h.response({
+    message: "Success",
+    data: user,
   });
 };
 
@@ -121,6 +142,23 @@ const quizDetail = async (request, h) => {
   }
 };
 
+const historyQuiz = async (request, h) => {
+  try {
+    const UserQuiz = new UserQuizModel();
+
+    const { credentials } = request.auth;
+
+    const sessions = await UserQuiz.getQuizByUserId(credentials.id);
+
+    return h.response({
+      message: "Success",
+      data: sessions,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 /**
  *
  * @param {Request} request
@@ -187,6 +225,12 @@ const getSession = async (request, h) => {
   });
 };
 
+/**
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ * @returns
+ */
 const getQuestionsBySessionId = async (request, h) => {
   const Session = new SessionModel();
 
@@ -208,30 +252,47 @@ const getQuestionsBySessionId = async (request, h) => {
   });
 };
 
+/**
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ * @returns
+ */
 const endSession = async (request, h) => {
-  const Session = new SessionModel();
+  try {
+    const Session = new SessionModel();
 
-  const { credentials } = request.auth;
-  const { session_id } = request.params;
-  const { data } = request.payload ?? {};
+    const { credentials } = request.auth;
+    const { session_id } = request.params;
+    const { data } = request.payload ?? {};
 
-  const session = await Session.endSession(session_id, data);
+    const session = await Session.getQuestionsBySessionId(session_id);
 
-  if (session.user.id !== credentials.id)
+    if (session.user.id !== credentials.id)
+      return h.response({
+        message: "Unauthorized",
+      });
+
+    await Session.endSession(session_id, data);
+
     return h.response({
-      message: "Unauthorized",
+      message: "Success",
     });
-
-  return h.response({
-    message: "Success",
-  });
+  } catch (err) {
+    console.log(err);
+    return h.response({
+      message: err.message,
+    });
+  }
 };
 
 module.exports = {
   me,
+  updateUser,
   discovery,
   allQuiz,
   quizDetail,
+  historyQuiz,
   createSession,
   getSession,
   getQuestionsBySessionId,

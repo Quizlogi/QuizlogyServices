@@ -142,16 +142,53 @@ class SessionModel {
       data: {
         user_id: session.user_id,
         quiz_id: session.quiz_id,
+        score: 0,
       },
     });
 
-    const userAnswer = data.map((item) => {
-      return {
+    const userAnswer = [];
+    for (const item of data) {
+      // validate question_id and option_id
+      const question = await prisma.question.findFirst({
+        where: {
+          id: item.question_id,
+        },
+      });
+
+      if (!question) {
+        // remove userQuiz
+        await UserQuiz.delete({
+          where: {
+            id: userQuiz.id,
+          },
+        });
+
+        throw new Error("Question not found");
+      }
+
+      const option = await prisma.option.findFirst({
+        where: {
+          id: item.option_id,
+        },
+      });
+
+      if (!option) {
+        // remove userQuiz
+        await UserQuiz.delete({
+          where: {
+            id: userQuiz.id,
+          },
+        });
+
+        throw new Error("Option not found");
+      }
+
+      userAnswer.push({
         user_quiz_id: userQuiz.id,
         question_id: item.question_id,
         option_id: item.option_id,
-      };
-    });
+      });
+    }
 
     // get correct answers
     const questions = await prisma.question.findMany({
