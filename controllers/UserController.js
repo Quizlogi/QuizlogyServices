@@ -27,7 +27,7 @@ const updateUser = async (request, h) => {
   const User = new UserModel();
 
   const { credentials } = request.auth;
-  const { data } = request.payload ?? {};
+  const data = request.payload;
 
   const user = await User.updateUser(credentials.id, data);
 
