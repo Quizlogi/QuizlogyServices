@@ -115,6 +115,7 @@ const quizDetail = async (request, h) => {
             name: true,
           },
         },
+        category: true,
         session: {
           select: {
             id: true,
@@ -124,6 +125,11 @@ const quizDetail = async (request, h) => {
                 name: true,
               },
             },
+          },
+        },
+        _count: {
+          select: {
+            questions: true,
           },
         },
       },
