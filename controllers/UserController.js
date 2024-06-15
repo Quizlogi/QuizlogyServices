@@ -4,6 +4,7 @@ const QuizModel = require("../models/QuizModel");
 const SessionModel = require("../models/SessionModel");
 const UserModel = require("../models/UserModel");
 const UserQuizModel = require("../models/UserQuizModel");
+const CategoryModel = require("../models/CategoryModel");
 
 /**
  *
@@ -45,11 +46,16 @@ const updateUser = async (request, h) => {
 const discovery = async (request, h) => {
   try {
     const Quiz = new QuizModel();
+
     const mostAnswered = await Quiz.getDiscovery();
+    const newest = await Quiz.getNewest();
 
     return h.response({
       message: "Success",
-      data: mostAnswered,
+      data: {
+        popular: mostAnswered,
+        newest,
+      },
     });
   } catch (err) {
     console.log(err);
@@ -142,6 +148,12 @@ const quizDetail = async (request, h) => {
   }
 };
 
+/**
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ * @returns
+ */
 const historyQuiz = async (request, h) => {
   try {
     const UserQuiz = new UserQuizModel();
@@ -153,6 +165,75 @@ const historyQuiz = async (request, h) => {
     return h.response({
       message: "Success",
       data: sessions,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+/**
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ * @returns
+ */
+const getAllCategories = async (request, h) => {
+  try {
+    const Category = new CategoryModel();
+
+    const categories = await Category.getCategory();
+
+    return h.response({
+      message: "Success",
+      data: categories,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+/**
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ * @returns
+ */
+const getCategoryById = async (request, h) => {
+  try {
+    const Category = new CategoryModel();
+
+    const { id } = request.params;
+
+    const category = await Category.db.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        quiz: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            image: true,
+            category: true,
+            _count: {
+              select: {
+                questions: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!category)
+      return h.response({
+        message: "Category not found",
+      });
+
+    return h.response({
+      message: "Success",
+      data: category,
     });
   } catch (err) {
     console.log(err);
@@ -293,6 +374,8 @@ module.exports = {
   allQuiz,
   quizDetail,
   historyQuiz,
+  getAllCategories,
+  getCategoryById,
   createSession,
   getSession,
   getQuestionsBySessionId,
