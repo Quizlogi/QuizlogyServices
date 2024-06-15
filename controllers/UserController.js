@@ -183,6 +183,40 @@ const historyQuiz = async (request, h) => {
  * @param {ResponseToolkit} h
  * @returns
  */
+const historyQuizById = async (request, h) => {
+  try {
+    const UserQuiz = new UserQuizModel();
+
+    const { id } = request.params;
+
+    const userQuiz = await UserQuiz.db.findFirst({
+      where: {
+        id,
+      },
+      include: {
+        quiz: {
+          include: {
+            category: true,
+          },
+        },
+      },
+    });
+
+    return h.response({
+      message: "Success",
+      data: userQuiz,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+/**
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ * @returns
+ */
 const getAllCategories = async (request, h) => {
   try {
     const Category = new CategoryModel();
@@ -385,6 +419,7 @@ module.exports = {
   allQuiz,
   quizDetail,
   historyQuiz,
+  historyQuizById,
   getAllCategories,
   getCategoryById,
   createSession,

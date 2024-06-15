@@ -12,6 +12,7 @@ const {
   historyQuiz,
   getAllCategories,
   getCategoryById,
+  historyQuizById,
 } = require("../../controllers/UserController");
 
 /**
@@ -57,6 +58,14 @@ module.exports = [
       auth: "jwt",
     },
     handler: historyQuiz,
+  },
+  {
+    method: "GET",
+    path: "/api/quiz/history/{id}",
+    config: {
+      auth: "jwt",
+    },
+    handler: historyQuizById,
   },
   {
     method: "GET",
