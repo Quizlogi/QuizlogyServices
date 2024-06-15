@@ -160,6 +160,59 @@ const quizDetail = async (request, h) => {
  * @param {ResponseToolkit} h
  * @returns
  */
+const searchQuiz = async (request, h) => {
+  try {
+    const Quiz = new QuizModel();
+
+    const { query } = request.query;
+
+    if (!query)
+      return h.response({
+        message: "Success",
+        data: [],
+      });
+
+    const quiz = await Quiz.db.findMany({
+      where: {
+        OR: [
+          {
+            title: {
+              contains: query,
+            },
+          },
+          {
+            description: {
+              contains: query,
+            },
+          },
+        ],
+      },
+      include: {
+        category: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      take: 6
+    });
+
+    return h.response({
+      message: "Success",
+      data: quiz,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+/**
+ *
+ * @param {Request} request
+ * @param {ResponseToolkit} h
+ * @returns
+ */
 const historyQuiz = async (request, h) => {
   try {
     const UserQuiz = new UserQuizModel();
@@ -360,8 +413,6 @@ const getQuestionsBySessionId = async (request, h) => {
 
   const session = await Session.getQuestionsBySessionId(session_id);
 
-  console.log(session);
-
   if (session.user.id !== credentials.id)
     return h.response({
       message: "Unauthorized",
@@ -418,6 +469,7 @@ module.exports = {
   discovery,
   allQuiz,
   quizDetail,
+  searchQuiz,
   historyQuiz,
   historyQuizById,
   getAllCategories,
