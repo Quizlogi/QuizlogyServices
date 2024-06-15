@@ -13,6 +13,7 @@ const {
   getAllCategories,
   getCategoryById,
   historyQuizById,
+  searchQuiz,
 } = require("../../controllers/UserController");
 
 /**
@@ -50,6 +51,14 @@ module.exports = [
       auth: false,
     },
     handler: quizDetail,
+  },
+  {
+    method: "GET",
+    path: "/api/quiz/search",
+    config: {
+      auth: false,
+    },
+    handler: searchQuiz,
   },
   {
     method: "GET",
