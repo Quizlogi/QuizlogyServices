@@ -354,6 +354,10 @@ const endSession = async (request, h) => {
     const { data } = request.payload ?? {};
 
     const session = await Session.getQuestionsBySessionId(session_id);
+    if (!session)
+      return h.response({
+        message: "Session not found",
+      });
 
     if (session.user.id !== credentials.id)
       return h.response({
