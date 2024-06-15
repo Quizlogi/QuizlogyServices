@@ -360,9 +360,10 @@ const endSession = async (request, h) => {
         message: "Unauthorized",
       });
 
-    await Session.endSession(session_id, data);
+    const result = await Session.endSession(session_id, data);
 
     return h.response({
+      data: result,
       message: "Success",
     });
   } catch (err) {
