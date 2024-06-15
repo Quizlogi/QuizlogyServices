@@ -7,7 +7,16 @@ class CategoryModel {
   }
 
   async getCategory() {
-    const category = await this.db.findMany();
+    const category = await this.db.findMany({
+      include: {
+        _count: {
+          select: {
+            quiz: true,
+          },
+        },
+      },
+    });
+    
     return category;
   }
 

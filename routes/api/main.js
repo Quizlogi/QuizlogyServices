@@ -10,6 +10,8 @@ const {
   endSession,
   updateUser,
   historyQuiz,
+  getAllCategories,
+  getCategoryById,
 } = require("../../controllers/UserController");
 
 /**
@@ -55,6 +57,22 @@ module.exports = [
       auth: "jwt",
     },
     handler: historyQuiz,
+  },
+  {
+    method: "GET",
+    path: "/api/quiz/category",
+    config: {
+      auth: false,
+    },
+    handler: getAllCategories,
+  },
+  {
+    method: "GET",
+    path: "/api/quiz/category/{id}",
+    config: {
+      auth: false,
+    },
+    handler: getCategoryById,
   },
   {
     method: "GET",

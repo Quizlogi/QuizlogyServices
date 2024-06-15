@@ -53,7 +53,7 @@ class QuizModel {
   }
 
   // async getDiscovery
-  async getDiscovery() {
+  async getDiscovery(length = 6) {
     const mostAnswered = await prisma.userQuiz.groupBy({
       by: ["quiz_id"],
       _count: {
@@ -64,7 +64,7 @@ class QuizModel {
           quiz_id: "desc",
         },
       },
-      take: 5,
+      take: length,
     });
 
     const quizzes = await Promise.all(
@@ -92,6 +92,20 @@ class QuizModel {
     );
 
     return quizzes;
+  }
+
+  async getNewest(length = 6) {
+    const newest = await prisma.quiz.findMany({
+      take: length,
+      orderBy: {
+        created_at: "desc",
+      },
+      include: {
+        category: true,
+      },
+    });
+
+    return newest;
   }
 
   async createQuiz(data) {
