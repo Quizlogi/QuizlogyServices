@@ -123,12 +123,6 @@ class SessionModel {
   }
 
   async endSession(session_id, data) {
-    /**
-     * data
-     * [
-     *  { question_id, option_id }
-     * ]
-     */
     const UserQuiz = prisma.userQuiz;
     const UserAnswer = prisma.userAnswer;
 
@@ -146,98 +140,114 @@ class SessionModel {
       },
     });
 
-    const userAnswer = [];
-    for (const item of data) {
-      // validate question_id and option_id
-      const question = await prisma.question.findFirst({
-        where: {
-          id: item.question_id,
-        },
-      });
-
-      if (!question) {
-        // remove userQuiz
-        await UserQuiz.delete({
+    try {
+      const userAnswer = [];
+      for (const item of data) {
+        // validate question_id and option_id
+        const question = await prisma.question.findFirst({
           where: {
-            id: userQuiz.id,
+            id: item.question_id,
           },
         });
 
-        throw new Error("Question not found");
-      }
+        if (!question) {
+          // remove userQuiz
+          await UserQuiz.delete({
+            where: {
+              id: userQuiz.id,
+            },
+          });
 
-      const option = await prisma.option.findFirst({
-        where: {
-          id: item.option_id,
-        },
-      });
+          throw new Error("Question not found");
+        }
 
-      if (!option) {
-        // remove userQuiz
-        await UserQuiz.delete({
+        const option = await prisma.option.findFirst({
           where: {
-            id: userQuiz.id,
+            id: item.option_id,
           },
         });
 
-        throw new Error("Option not found");
+        if (!option) {
+          // remove userQuiz
+          await UserQuiz.delete({
+            where: {
+              id: userQuiz.id,
+            },
+          });
+
+          throw new Error("Option not found");
+        }
+
+        userAnswer.push({
+          user_quiz_id: userQuiz.id,
+          question_id: item.question_id,
+          option_id: item.option_id,
+        });
       }
 
-      userAnswer.push({
-        user_quiz_id: userQuiz.id,
-        question_id: item.question_id,
-        option_id: item.option_id,
-      });
-    }
-
-    // get correct answers
-    const questions = await prisma.question.findMany({
-      where: {
-        quiz_id: session.quiz_id,
-      },
-    });
-
-    let correctAnswers = 0;
-    for (let j = 0; j < questions.length; j++) {
-      const options = await prisma.option.findMany({
+      // get correct answers
+      const questions = await prisma.question.findMany({
         where: {
-          question_id: questions[j].id,
+          quiz_id: session.quiz_id,
         },
       });
 
-      const selectedOption = options.find(
-        (option) => option.id === userAnswer[j].option_id
-      );
-      if (selectedOption.is_correct) {
-        correctAnswers++;
+      let correctAnswers = 0;
+      for (let j = 0; j < questions.length; j++) {
+        const options = await prisma.option.findMany({
+          where: {
+            question_id: questions[j].id,
+          },
+        });
+
+        const selectedQuestion = userAnswer.find(
+          (answer) => answer.question_id === questions[j].id
+        );
+
+        const selectedOption = options.find(
+          (option) => option.id === selectedQuestion.option_id
+        );
+
+        if (selectedOption.is_correct) {
+          correctAnswers++;
+        }
       }
+
+      const score = (correctAnswers / questions.length) * 100;
+
+      await UserQuiz.update({
+        where: {
+          id: userQuiz.id,
+        },
+        data: {
+          score: score,
+        },
+      });
+
+      await UserAnswer.createMany({
+        data: userAnswer,
+      });
+
+      // delete session
+      await this.db.delete({
+        where: {
+          id: session_id,
+        },
+      });
+
+      userQuiz.score = score;
+
+      return userQuiz;
+    } catch (err) {
+      // remove current userQuiz
+      await UserQuiz.delete({
+        where: {
+          id: userQuiz.id,
+        },
+      });
+
+      throw new Error(err);
     }
-
-    const score = (correctAnswers / questions.length) * 100;
-
-    await UserQuiz.update({
-      where: {
-        id: userQuiz.id,
-      },
-      data: {
-        score: score,
-      },
-    });
-
-    await UserAnswer.createMany({
-      data: userAnswer,
-    });
-
-    // delete session
-    await this.db.delete({
-      where: {
-        id: session_id,
-      },
-    });
-
-    userQuiz.score = score;
-
-    return userQuiz;
   }
 }
 
