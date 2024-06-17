@@ -19,4 +19,4 @@ CDN_URL="http://localhost:3000"
 5. Run `npm run dev` to start the server
 
 ## API Documentation
-Using Hoppscotch to test the API
+[Click here](https://docs.quizlogy.xyz)
