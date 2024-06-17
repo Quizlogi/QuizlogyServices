@@ -258,9 +258,29 @@ const createQuiz = async (request, h) => {
         })
         .code(400);
 
-    // save image
+    // check category exists
+    const categoryExists = await Quiz.db.findUnique({
+      where: {
+        id: json.category_id,
+      },
+    });
+
+    if (!categoryExists)
+      return h
+        .response({
+          message: "Category not found",
+        })
+        .code(404);
+
+    if (Buffer.isBuffer(image)) {
+      const base64 = `data:image/png;base64,${image.toString("base64")}`;
+      json.image = base64;
+    } else {
+      json.image = image;
+    }
+
     const buffer = Buffer.from(
-      image.replace(/^data:image\/\w+;base64,/, ""),
+      json.image.replace(/^data:image\/\w+;base64,/, ""),
       "base64"
     );
 
@@ -276,8 +296,8 @@ const createQuiz = async (request, h) => {
 
     return h.response({ message: "Success", data: quizData });
   } catch (err) {
-    fs.unlinkSync(`uploads/${now}.png`);
     console.error(err);
+    fs.unlinkSync(`uploads/${now}.png`);
   }
 };
 
