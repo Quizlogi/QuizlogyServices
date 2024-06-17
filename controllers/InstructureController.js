@@ -234,6 +234,8 @@ const createQuiz = async (request, h) => {
         .code(403);
 
     const Quiz = new QuizModel();
+    const Category = new CategoryModel();
+
     const { quiz, image } = request.payload;
 
     if (!quiz || !image)
@@ -259,7 +261,7 @@ const createQuiz = async (request, h) => {
         .code(400);
 
     // check category exists
-    const categoryExists = await Quiz.db.findUnique({
+    const categoryExists = await Category.db.findUnique({
       where: {
         id: json.category_id,
       },
