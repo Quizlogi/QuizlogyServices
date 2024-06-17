@@ -448,8 +448,15 @@ const editQuiz = async (request, h) => {
         .code(400);
 
     if (image) {
+      if (Buffer.isBuffer(image)) {
+        const base64 = `data:image/png;base64,${image.toString("base64")}`;
+        json.image = base64;
+      } else {
+        json.image = image;
+      }
+
       const buffer = Buffer.from(
-        image.replace(/^data:image\/\w+;base64,/, ""),
+        json.image.replace(/^data:image\/\w+;base64,/, ""),
         "base64"
       );
 
