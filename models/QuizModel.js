@@ -105,7 +105,23 @@ class QuizModel {
       },
     });
 
-    return newest;
+    // query question count
+    const quizzes = await Promise.all(
+      newest.map(async (quiz) => {
+        const questions = await prisma.question.count({
+          where: {
+            quiz_id: quiz.id,
+          },
+        });
+
+        return {
+          ...quiz,
+          question_count: questions,
+        };
+      })
+    );
+
+    return quizzes;
   }
 
   async createQuiz(data) {
