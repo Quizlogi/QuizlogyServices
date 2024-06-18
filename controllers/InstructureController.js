@@ -524,7 +524,7 @@ const removeQuiz = async (request, h) => {
       },
     });
 
-    fs.unlinkSync(quiz.image);
+    quiz.image.startsWith("http") || fs.unlinkSync(quiz.image);
 
     return h.response({
       message: "Success",
