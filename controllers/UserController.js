@@ -13,10 +13,36 @@ const CategoryModel = require("../models/CategoryModel");
  * @returns
  */
 const me = async (request, h) => {
-  return h.response({
-    message: "Success",
-    data: request.auth.credentials,
-  });
+  try {
+    const { credentials } = request.auth;
+    const User = new UserModel();
+
+    const user = await User.db.findFirst({
+      where: {
+        id: credentials.id,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        username: true,
+        role: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        Session: true,
+      },
+    });
+
+    return h.response({
+      message: "Success",
+      data: user,
+    });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 /**
