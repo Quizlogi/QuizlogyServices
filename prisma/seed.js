@@ -27,28 +27,30 @@ const seed = async () => {
 
   await prisma.user.create({
     data: {
-      email: "admin@mail.com",
+      email: "admin@quizlogy.xyz",
       password: "admin",
       username: "admin",
+      name: "Admin",
       role_id: 3,
     },
   });
 
   await prisma.user.create({
     data: {
-      email: "inst@mail.com",
-      password: "inst",
-      username: "inst",
+      email: "instructure@quizlogy.xyz",
+      password: "instructure",
+      username: "instructure",
+      name: "Instructure",
       role_id: 2,
     },
   });
 
   await prisma.user.create({
     data: {
-      email: "kato@mail.com",
-      password: "kato",
-      username: "kato",
-      name: "Kato",
+      email: "user@quizlogy.xyz",
+      password: "user",
+      username: "user",
+      name: "user",
       role_id: 1,
     },
   });
